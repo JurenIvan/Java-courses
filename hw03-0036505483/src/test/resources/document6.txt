@@ -1,0 +1,1 @@
+Example \{$=1$}. Now actually write one {$=1$}
