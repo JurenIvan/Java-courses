@@ -102,13 +102,15 @@ public interface Environment {
 	 * Method that sets absolute normalized path to current directory where user
 	 * process is running
 	 * 
-	 * @return
+	 * @param path path that is set as a current directory
+	 * 
 	 */
 	void setCurrentDirectory(Path path);
 
 	/**
 	 * Returns data stored in map used for shared work
 	 * 
+	 * @param key String used to retrieve data from map
 	 * @return data stored by key or null if no such data exist
 	 */
 	Object getSharedData(String key);
@@ -116,6 +118,8 @@ public interface Environment {
 	/**
 	 * Method that stores data into map so that it can be used later
 	 * 
+	 * @param key   String used to store data into map
+	 * @param value Object/data that is stored into map
 	 * @throws NullPointerException if data stored is null reference
 	 */
 	void setSharedData(String key, Object value);

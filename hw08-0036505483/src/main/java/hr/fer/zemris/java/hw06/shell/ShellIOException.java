@@ -14,7 +14,7 @@ public class ShellIOException extends RuntimeException {
 	/**
 	 * Constructs an ShellIOException with the specified detail message.
 	 *
-	 * @param s the detail message.
+	 * @param message the detail message.
 	 */
 	public ShellIOException(String message) {
 		super(message);

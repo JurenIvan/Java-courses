@@ -6,7 +6,20 @@ import searching.slagalica.KonfiguracijaSlagalice;
 import searching.slagalica.Slagalica;
 import searching.slagalica.gui.SlagalicaViewer;
 
+/**
+ * Class containing main method that solves given puzzle with gui
+ * 
+ * @author juren
+ *
+ */
 public class SlagalicaMain {
+
+	/**
+	 * Method used to start a program
+	 * 
+	 * @param args One string(no spaces) is expected. That String should contain
+	 *             digits 0-9 where 0 represent blank space.
+	 */
 	public static void main(String[] args) {
 		int input[] = new int[9];
 		if (args.length != 1) {
@@ -29,7 +42,7 @@ public class SlagalicaMain {
 			return;
 		}
 
-		Slagalica slagalica = new Slagalica(new KonfiguracijaSlagalice(input));
+		Slagalica<?> slagalica = new Slagalica<>(new KonfiguracijaSlagalice(input));
 		Node<KonfiguracijaSlagalice> rješenje = SearchUtil.bfsv(slagalica, slagalica, slagalica);
 
 		if (rješenje == null) {

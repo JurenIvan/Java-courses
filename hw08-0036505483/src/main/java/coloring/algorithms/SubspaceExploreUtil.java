@@ -9,8 +9,26 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+/**
+ * Class containing methods that are able to paint area of drawing.
+ * 
+ * @author juren
+ *
+ */
 public class SubspaceExploreUtil {
 
+	/**
+	 * Implementation of dfs algorithm used for filling areas of drawing
+	 * 
+	 * @param s0         Supplier whose get method is used to provide starting
+	 *                   pixels
+	 * @param process    Consumer whose accept method is used to color a pixel with
+	 *                   a reference color
+	 * @param succ       Function whose apply method returns List of neighboring
+	 *                   pixels
+	 * @param acceptable Predicate whose test function is used to test whether pixel
+	 *                   needs coloring
+	 */
 	public static <S> void dfs(Supplier<S> s0, Consumer<S> process, Function<S, List<S>> succ,
 			Predicate<S> acceptable) {
 
@@ -27,6 +45,18 @@ public class SubspaceExploreUtil {
 
 	}
 
+	/**
+	 * Implementation of bfs algorithm used for filling areas of drawing
+	 *
+	 * @param s0         Supplier whose get method is used to provide starting
+	 *                   pixels
+	 * @param process    Consumer whose accept method is used to color a pixel with
+	 *                   a reference color
+	 * @param succ       Function whose apply method returns List of neighboring
+	 *                   pixels
+	 * @param acceptable Predicate whose test function is used to test whether pixel
+	 *                   needs coloring
+	 */
 	public static <S> void bfs(Supplier<S> s0, Consumer<S> process, Function<S, List<S>> succ,
 			Predicate<S> acceptable) {
 
@@ -43,6 +73,19 @@ public class SubspaceExploreUtil {
 
 	}
 
+	/**
+	 * Smart implementation of bfs algorithm used for filling areas of drawing. Uses
+	 * HashSet to determine whether it has already been at certain pixel
+	 * 
+	 * @param s0         Supplier whose get method is used to provide starting
+	 *                   pixels
+	 * @param process    Consumer whose accept method is used to color a pixel with
+	 *                   a reference color
+	 * @param succ       Function whose apply method returns List of neighboring
+	 *                   pixels
+	 * @param acceptable Predicate whose test function is used to test whether pixel
+	 *                   needs coloring
+	 */
 	public static <S> void bfsv(Supplier<S> s0, Consumer<S> process, Function<S, List<S>> succ,
 			Predicate<S> acceptable) {
 

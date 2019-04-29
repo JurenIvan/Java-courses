@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Class containing method able to transform input regex into array of builders
+ * that can generate new name according to rules generated from regex
+ * 
+ * @author juren
+ *
+ */
 public class NameBuilderParser {
 
 	/**
@@ -24,10 +31,11 @@ public class NameBuilderParser {
 	 * makes apropriate list of NameBuilders from String that was given to it
 	 * 
 	 * @param outputRegex string that is parsed into groups
-	 * @throws IllegalArgumentException if given string is empty or outputRegex if not properly formated
+	 * @throws IllegalArgumentException if given string is empty or outputRegex if
+	 *                                  not properly formated
 	 */
 	public NameBuilderParser(String outputRegex) {
-		if(outputRegex==null)
+		if (outputRegex == null)
 			throw new IllegalArgumentException("Provided string must not be null");
 		builders = new ArrayList<>();
 		currentChar = 0;
@@ -36,17 +44,17 @@ public class NameBuilderParser {
 		if (outputRegex.length() == 0)
 			throw new IllegalArgumentException("Such name can not be produced.");
 		try {
-		while (currentChar < data.length) {
-			if (currentChar + 1 < data.length) {
-				if (data[currentChar] == '$' && data[currentChar + 1] == '{') {
-					dealWithBlocks();
+			while (currentChar < data.length) {
+				if (currentChar + 1 < data.length) {
+					if (data[currentChar] == '$' && data[currentChar + 1] == '{') {
+						dealWithBlocks();
+					}
 				}
+				dealWithText();
 			}
-			dealWithText();
-		}
-		}catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new IllegalArgumentException(e.getMessage());
-		}catch (IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 
@@ -135,8 +143,9 @@ public class NameBuilderParser {
 
 	/**
 	 * Implementation for NameBuilder that adds provided text to Stringbuilder
-	 * (current name)
+	 * (current name).
 	 * 
+	 * @param text that {@link NameBuilder} generates every time it is called
 	 * @return NameBuilder that can build proper name
 	 * @throws NullPointerException if provided text is null
 	 */
@@ -148,6 +157,7 @@ public class NameBuilderParser {
 	/**
 	 * Implementation for NameBuilder that adds index-th group of FilterResults
 	 * groups to name (current name)
+	 * 
 	 * @param index of group that is added onto name
 	 * 
 	 * @return NameBuilder that can build proper name
@@ -162,17 +172,19 @@ public class NameBuilderParser {
 	 * if it is smaller than minWidth then it fills the gap with char provided
 	 * (current name)
 	 * 
-	 * @param index of group that is added onto name
-	 * @param char what is used as padding if length of index-th group of FilterResults is smaller than minWidth
+	 * @param index    of group that is added onto name
+	 * @param padding  that is used as padding if length of index-th group of
+	 *                 FilterResults is smaller than minWidth
 	 * @param minWidth minimal length of string provided
 	 * 
 	 * @return NameBuilder that can build proper name
-	 * @throws IllegalArgumentException if minWidth is negative or padding is not space or zero
+	 * @throws IllegalArgumentException if minWidth is negative or padding is not
+	 *                                  space or zero
 	 */
 	public static NameBuilder group(int index, char padding, int minWidth) {
-		if(minWidth<0)
+		if (minWidth < 0)
 			throw new IllegalArgumentException("MinWidth can not be smaller than zero");
-		if(padding!=' ' && padding!='0')
+		if (padding != ' ' && padding != '0')
 			throw new IllegalArgumentException("Padding can be only '0' or ' ' ");
 		return (result, sb) -> {
 			String thingToWrite = result.group(index);

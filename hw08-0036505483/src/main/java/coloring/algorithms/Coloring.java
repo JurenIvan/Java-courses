@@ -2,6 +2,7 @@ package coloring.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -9,20 +10,42 @@ import java.util.function.Supplier;
 
 import marcupic.opjj.statespace.coloring.Picture;
 
+/**
+ * Class that models operations made over certain picture.
+ * 
+ * @author juren
+ *
+ */
 public class Coloring implements Consumer<Pixel>, Function<Pixel, List<Pixel>>, Predicate<Pixel>, Supplier<Pixel> {
 
+	/**
+	 * Variable that saves reference to {@link Pixel}.
+	 */
 	private Pixel reference;
+	/**
+	 * Variable that saves reference to {@link Picture}.
+	 */
 	private Picture picture;
+	/**
+	 * Variable that stores integer representation of color which is used to fill.
+	 */
 	private int fillColor;
+	/**
+	 * Variable that stores integer representation of color that will be changed.
+	 */
 	private int refColor;
 
 	/**
+	 * Constructor for class. Takes
+	 * 
 	 * @param reference
 	 * @param picture
 	 * @param fillColor
 	 */
 	public Coloring(Pixel reference, Picture picture, int fillColor) {
-		super();
+		Objects.requireNonNull(picture, "Picture referenced must not be null.");
+		Objects.requireNonNull(reference, "Pixel reference referenced must not be null");
+
 		this.reference = reference;
 		this.picture = picture;
 		this.fillColor = fillColor;
@@ -43,23 +66,19 @@ public class Coloring implements Consumer<Pixel>, Function<Pixel, List<Pixel>>, 
 	public List<Pixel> apply(Pixel t) {
 		List<Pixel> newList = new ArrayList<Pixel>();
 
-		if (checkCords(t.getX() + 1, t.getY()))
+		if (t.getX() + 1 < picture.getWidth())
 			newList.add(new Pixel(t.getX() + 1, t.getY()));
 
-		if (checkCords(t.getX(), t.getY() + 1))
+		if (t.getY() + 1 < picture.getHeight())
 			newList.add(new Pixel(t.getX(), t.getY() + 1));
 
-		if (checkCords(t.getX() - 1, t.getY()))
+		if (t.getX() - 1 >= 0)
 			newList.add(new Pixel(t.getX() - 1, t.getY()));
 
-		if (checkCords(t.getX(), t.getY() - 1))
+		if (t.getY() - 1 >= 0)
 			newList.add(new Pixel(t.getX(), t.getY() - 1));
 
 		return newList;
-	}
-
-	private boolean checkCords(int x, int y) {
-		return (x >= 0 && y >= 0 && picture.getHeight() > y && picture.getWidth() > x);
 	}
 
 	@Override

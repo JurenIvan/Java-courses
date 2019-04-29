@@ -22,7 +22,8 @@ public interface ShellCommand {
 	 *                  multiline input, the shell has already concatenated all
 	 *                  lines into a single line and removed MORELINES symbol from
 	 *                  line endings (before concatenation).
-	 * @return
+	 * @return {@link ShellStatus} representing whether program should continue or
+	 *         should it be terminated
 	 */
 	ShellStatus executeCommand(Environment env, String arguments);
 

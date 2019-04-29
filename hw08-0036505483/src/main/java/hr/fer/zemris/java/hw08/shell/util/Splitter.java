@@ -19,7 +19,7 @@ public class Splitter {
 	 * that we can have double quotes inbetween other two double quotes.
 	 * 
 	 * @param arg
-	 * @return
+	 * @return array of "words" that user inputed
 	 */
 	public static String[] split(String arg) {
 		if (arg == null)
@@ -79,7 +79,7 @@ public class Splitter {
 		public String[] getArgs() {
 			String[] toBeReturned = new String[args.size()];
 			for (int i = 0; i < args.size(); i++) {
-				toBeReturned[i] = args.get(i);//.trim();
+				toBeReturned[i] = args.get(i);// .trim();
 			}
 			return toBeReturned;
 		}
@@ -94,9 +94,9 @@ public class Splitter {
 				if (data[currentIndex] == '\"') {
 					currentIndex++;
 					String text = readQuotes();
-					// if (text.length() > 0) { 
-												// if command "" "" is interpreted as command with no
-												// arguments, diable this comments
+					// if (text.length() > 0) {
+					// if command "" "" is interpreted as command with no
+					// arguments, diable this comments
 					args.add(text);
 					// }
 					if (currentIndex < data.length && data[currentIndex] != ' ')

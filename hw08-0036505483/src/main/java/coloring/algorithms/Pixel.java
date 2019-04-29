@@ -2,11 +2,26 @@ package coloring.algorithms;
 
 import java.util.Objects;
 
+/**
+ * Class representing model of Pixel. Has toString, Equals,Hash and x and y
+ * coordinates
+ * 
+ * @author juren
+ *
+ */
 public class Pixel {
-	private int x;
-	private int y;
-	
 	/**
+	 * Variable that stores value of x coordinate
+	 */
+	private int x;
+	/**
+	 * Variable that stores value of x coordinate
+	 */
+	private int y;
+
+	/**
+	 * Getter for coordinate
+	 * 
 	 * @return the x
 	 */
 	public int getX() {
@@ -14,13 +29,8 @@ public class Pixel {
 	}
 
 	/**
-	 * @param x the x to set
-	 */
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	/**
+	 * Getter for coordinate
+	 * 
 	 * @return the y
 	 */
 	public int getY() {
@@ -28,13 +38,8 @@ public class Pixel {
 	}
 
 	/**
-	 * @param y the y to set
-	 */
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	/**
+	 * Standard Constructor.
+	 * 
 	 * @param x
 	 * @param y
 	 */
