@@ -51,7 +51,6 @@ public class SearchUtil {
 	 * 
 	 * @param s0   Supplier whose get method is used to provide starting state
 	 * @param succ Function whose apply method returns List of possible steps
-	 * 
 	 * @param goal Predicate whose test function is used to test whether provided
 	 *             state represents complete solution
 	 * @return Node that hold solution and reference to all other Nodes required to
@@ -62,7 +61,8 @@ public class SearchUtil {
 		List<Node<S>> toExplore = new LinkedList<Node<S>>();
 		Set<S> explored = new HashSet<>();
 		toExplore.add(new Node<S>(null, s0.get(), 0));
-
+		explored.add(s0.get());
+		
 		while (!toExplore.isEmpty()) {
 			Node<S> ni = toExplore.remove(0);
 			if (goal.test(ni.getState()))

@@ -20,6 +20,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+
 /**
  * Class that has main method able to interact through console with user who can
  * demand encryption or decryption or just SHA-256 check of files.

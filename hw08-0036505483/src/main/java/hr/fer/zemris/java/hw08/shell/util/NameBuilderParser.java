@@ -123,7 +123,7 @@ public class NameBuilderParser {
 
 			if (data[currentChar] == '}') {
 				currentChar++;
-				builders.add(group(Integer.parseInt(upUntilNow.toString()), padding, Integer.parseInt(sb.toString())));
+				builders.add(group(Integer.parseInt(upUntilNow.toString().trim()), padding, Integer.parseInt(sb.toString().trim())));
 				return;
 			}
 			sb.append(data[currentChar++]);

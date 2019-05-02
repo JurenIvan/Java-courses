@@ -42,7 +42,7 @@ public class SlagalicaMain {
 			return;
 		}
 
-		Slagalica<?> slagalica = new Slagalica<>(new KonfiguracijaSlagalice(input));
+		Slagalica slagalica = new Slagalica(new KonfiguracijaSlagalice(input));
 		Node<KonfiguracijaSlagalice> rješenje = SearchUtil.bfsv(slagalica, slagalica, slagalica);
 
 		if (rješenje == null) {

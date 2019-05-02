@@ -150,7 +150,15 @@ public class MassrenameShellCommand implements ShellCommand {
 	private void executeTask(Path fromFolder, Path toFolder, String inputRegex, String outputRegex, Environment env)
 			throws IOException {
 		List<FilterResult> result = filter(fromFolder, inputRegex);
-		NameBuilderParser nbp = new NameBuilderParser(outputRegex);
+
+		NameBuilderParser nbp;
+		try {
+			nbp = new NameBuilderParser(outputRegex);
+		} catch (NumberFormatException e) {
+			env.writeln("Irregular expression");
+			return;
+		}
+
 		NameBuilder nb = nbp.getNameBuilder();
 		for (var line : result) {
 			StringBuilder firstFile = new StringBuilder();
@@ -161,7 +169,12 @@ public class MassrenameShellCommand implements ShellCommand {
 			secondFile.append(toFolder.toString());
 			secondFile.append("\\");
 			StringBuilder sb = new StringBuilder();
-			nb.execute(line, sb);
+			try {
+				nb.execute(line, sb);
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println("No such group found.");
+				return;
+			}
 			secondFile.append(sb.toString());
 
 			Files.move(Paths.get(firstFile.toString()), Paths.get(secondFile.toString()),
@@ -184,19 +197,26 @@ public class MassrenameShellCommand implements ShellCommand {
 	private void showTask(Path fromFolder, Path toFolder, String inputRegex, String outputRegex, Environment env)
 			throws IOException {
 		List<FilterResult> result = filter(fromFolder, inputRegex);
-		NameBuilderParser nbp = new NameBuilderParser(outputRegex);
+		NameBuilderParser nbp;
+		try {
+			nbp = new NameBuilderParser(outputRegex);
+		} catch (NumberFormatException e) {
+			env.writeln("Irregular expression");
+			return;
+		}
 		NameBuilder nb = nbp.getNameBuilder();
 		for (var line : result) {
 			StringBuilder output = new StringBuilder();
-			output.append(fromFolder.toString());
-			output.append("\\");
 			output.append(line.toString());
 			output.append(" => ");
-			output.append(toFolder.toString());
-			output.append("\\");
 
 			StringBuilder sb = new StringBuilder();
-			nb.execute(line, sb);
+			try {
+				nb.execute(line, sb);
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println("No such group found.");
+				return;
+			}
 			output.append(sb.toString());
 			env.writeln(output.toString());
 		}
@@ -242,9 +262,9 @@ public class MassrenameShellCommand implements ShellCommand {
 		Objects.requireNonNull(inputRegex);
 		Objects.requireNonNull(env);
 
-		List<FilterResult> result ;
+		List<FilterResult> result;
 		try {
-			 result = filter(fromFolder, inputRegex);
+			result = filter(fromFolder, inputRegex);
 		} catch (PatternSyntaxException e) {
 			env.writeln("Invalid pattern provided");
 			return;

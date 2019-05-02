@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 import marcupic.opjj.statespace.coloring.Picture;
 
+
 /**
  * Class that models operations made over certain picture.
  * 
@@ -36,11 +37,11 @@ public class Coloring implements Consumer<Pixel>, Function<Pixel, List<Pixel>>, 
 	private int refColor;
 
 	/**
-	 * Constructor for class. Takes
+	 * Constructor for class. Takes  variable that saves reference to {@link Pixel}, variable that saves reference to {@link Picture}, variable that stores integer representation of color which is used to fill and figures out variable that stores integer representation of color that will be changed.
 	 * 
-	 * @param reference
-	 * @param picture
-	 * @param fillColor
+	 * @param reference Variable that saves reference to {@link Pixel}.
+	 * @param picture Variable that saves reference to {@link Picture}.
+	 * @param fillColor Variable that stores integer representation of color which is used to fill.
 	 */
 	public Coloring(Pixel reference, Picture picture, int fillColor) {
 		Objects.requireNonNull(picture, "Picture referenced must not be null.");

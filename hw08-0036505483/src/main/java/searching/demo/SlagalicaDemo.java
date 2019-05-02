@@ -25,7 +25,7 @@ public class SlagalicaDemo {
 	 */
 	public static void main(String[] args) {
 
-		Slagalica<?> slagalica = new Slagalica<>(new KonfiguracijaSlagalice(new int[] { 2, 3, 0, 1, 4, 6, 7, 5, 8 }));
+		Slagalica slagalica = new Slagalica(new KonfiguracijaSlagalice(new int[] { 2, 3, 0, 1, 4, 6, 7, 5, 8 }));
 		Node<KonfiguracijaSlagalice> rješenje = SearchUtil.bfsv(slagalica, slagalica, slagalica);
 
 		if (rješenje == null) {

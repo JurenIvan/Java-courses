@@ -17,9 +17,8 @@ import searching.algorithms.Transition;
  * 
  * @author juren
  *
- * @param <S>
  */
-public class Slagalica<S> implements Supplier<KonfiguracijaSlagalice>,
+public class Slagalica implements Supplier<KonfiguracijaSlagalice>,
 		Function<KonfiguracijaSlagalice, List<Transition<KonfiguracijaSlagalice>>>, Predicate<KonfiguracijaSlagalice> {
 
 	/**

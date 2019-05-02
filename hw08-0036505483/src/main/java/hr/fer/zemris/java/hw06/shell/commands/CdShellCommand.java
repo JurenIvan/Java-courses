@@ -1,6 +1,8 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +35,15 @@ public class CdShellCommand implements ShellCommand {
 			env.writeln("Should have been exactly one argument.");
 			return ShellStatus.CONTINUE;
 		}
-		
+
 		try {
+			Path newPath = env.getCurrentDirectory().resolve(Paths.get(args[0])).normalize();
+			if (Files.exists(newPath) && Files.isDirectory(newPath)) {
+				env.setCurrentDirectory(newPath);
+			}else {
+				env.writeln("Path is not directory.");
+			}
 			
-			env.setCurrentDirectory(env.getCurrentDirectory().resolve(Paths.get(args[0])));
 		} catch (InvalidPathException e1) {
 			env.writeln("Path is invalid.");
 			return ShellStatus.CONTINUE;

@@ -13,6 +13,7 @@ import hr.fer.zemris.java.hw06.shell.commands.CatShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CdShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CharsetsShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CopyShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.DropdShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.ExitShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.HelpShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.HexdumpShellCommand;
@@ -154,6 +155,7 @@ public class MyShell {
 			commands.put("symbol", new SymbolShellCommand());
 			commands.put("exit", new ExitShellCommand());
 			
+			commands.put("dropd",new DropdShellCommand());
 			commands.put("cd", new CdShellCommand());
 			commands.put("pwd", new PwdShellCommand());
 			commands.put("pushd",new PushdShellCommand());

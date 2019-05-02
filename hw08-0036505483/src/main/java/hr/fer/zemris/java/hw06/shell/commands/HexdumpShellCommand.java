@@ -15,6 +15,7 @@ import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 import hr.fer.zemris.java.hw08.shell.util.Splitter;
+import hr.fer.zemris.java.hw08.shell.util.Util;
 
 /**
  * This class represents implementation for hexdump command.
@@ -125,7 +126,7 @@ public class HexdumpShellCommand implements ShellCommand {
 				if (outputPosition <= i || (outher*8+i>=outputPosition)) {
 					sb.append("  ");
 				} else {
-					sb.append(Integer.toHexString(outputBuff[outher * 8 + i]).toUpperCase());
+					sb.append(Util.transformToString(outputBuff[outher * 8 + i]).toUpperCase());
 				}
 			}
 			sb.append("|");
