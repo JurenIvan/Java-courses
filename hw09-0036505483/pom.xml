@@ -50,6 +50,12 @@
       <version>1.0</version>
     </dependency>
     
+    <dependency>
+      <groupId> hr.fer.zemris.java.raytracer</groupId>
+      <artifactId>raytracer</artifactId>
+      <version>1.0</version>
+    </dependency>
+    
   </dependencies>
 
   <build>

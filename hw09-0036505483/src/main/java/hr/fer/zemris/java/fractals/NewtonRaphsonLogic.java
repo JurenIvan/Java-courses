@@ -8,7 +8,7 @@ import hr.fer.zemris.math.ComplexRootedPolynomial;
 
 public class NewtonRaphsonLogic {
 
-	private static double convergenceTreshold = 0.01;
+	private static double convergenceTreshold = 0.002;
 
 	public static void calculate(double reMin, double reMax, double imMin, double imMax, int width, int height, int m,
 			int yMin, int yMax, short[] data, AtomicBoolean cancel, ComplexRootedPolynomial polynom) {
@@ -44,7 +44,5 @@ public class NewtonRaphsonLogic {
 				data[offset++] = (short) (index + 1);
 			}
 		}
-
 	}
-
 }
