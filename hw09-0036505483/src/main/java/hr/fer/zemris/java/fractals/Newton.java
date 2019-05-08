@@ -19,7 +19,7 @@ import hr.fer.zemris.math.ComplexRootedPolynomial;
  * Class that has main method used to demonstrate and visualize Newton-Raphson
  * fractals.
  * 
- * This class holds multi-threaded implementation of problem.
+ * This class contains multi-threaded implementation of problem.
  * 
  * @author juren
  *
@@ -34,7 +34,7 @@ public class Newton {
 
 	/**
 	 * Main method used to start program which is used to demonstrate and visualize
-	 * Newton-Raphson fractals.
+	 * Newton-Raphson fractals. Expects user input through system.in .
 	 * 
 	 * @param args not used
 	 */
@@ -51,10 +51,10 @@ public class Newton {
 	}
 
 	/**
-	 * private class that holds implementation of {@link IFractalProducer} used for
+	 * Private class that holds implementation of {@link IFractalProducer} used for
 	 * communication with GUI that is responsible for drawing.
 	 * 
-	 * This class holds multi thread implementation of problem. Problem is divided
+	 * This class holds multi-threaded implementation of problem. Problem is divided
 	 * into 8 times the number of cores in system and job is equally divided between
 	 * them.
 	 * 

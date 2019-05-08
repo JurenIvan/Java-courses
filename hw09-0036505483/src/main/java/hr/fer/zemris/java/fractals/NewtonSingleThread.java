@@ -12,13 +12,14 @@ import hr.fer.zemris.math.ComplexRootedPolynomial;
  * fractals.
  * 
  * This class holds single thread implementation of problem.
+ * 
  * @author juren
  *
  */
 public class NewtonSingleThread {
 
 	/**
-	 * Constant that holds string used at the beggining of program.
+	 * Constant that holds string used at the beginning of program.
 	 */
 	private static final String WELCOME_MESSAGE = "Welcome to Newton-Raphson iteration-based fractal viewer."
 			+ "\r\nPlease enter at least two roots, one root per line. Enter 'done' when done.";
@@ -43,10 +44,11 @@ public class NewtonSingleThread {
 	}
 
 	/**
-	 * private class that holds implementation of {@link IFractalProducer} used for
+	 * Private class that holds implementation of {@link IFractalProducer} used for
 	 * communication with GUI that is responsible for drawing.
 	 * 
 	 * This class holds single thread implementation of problem.
+	 * 
 	 * @author juren
 	 *
 	 */

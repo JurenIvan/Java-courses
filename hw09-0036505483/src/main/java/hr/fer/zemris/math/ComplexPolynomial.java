@@ -14,12 +14,12 @@ import java.util.Objects;
 public class ComplexPolynomial {
 
 	/**
-	 * Array that stores coefficient of Complex polynomial
+	 * Array that stores coefficient of Complex polynomial.
 	 */
 	private final Complex[] coeficients;
 
 	/**
-	 * Constructor that creates new polynomial
+	 * Constructor that creates new polynomial.
 	 * 
 	 * @param factors array of factors
 	 * @throws NullPointerException if no roots are provided
@@ -30,7 +30,7 @@ public class ComplexPolynomial {
 	}
 
 	/**
-	 * method that returns order of polynomial
+	 * Method that returns order of polynomial.
 	 * 
 	 * @return order of polynomial
 	 */
@@ -71,7 +71,6 @@ public class ComplexPolynomial {
 		for (int i = 0; i < coeficients.length - 1; i++) {
 			factors[i] = coeficients[i].multiply(new Complex(coeficients.length - i - 1, 0));
 		}
-
 		return new ComplexPolynomial(factors);
 
 	}

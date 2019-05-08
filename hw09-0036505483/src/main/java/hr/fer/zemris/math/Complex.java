@@ -9,17 +9,22 @@ import java.util.Objects;
  * Class representing unmodifiable complex number. Every complex number is
  * stored as a pair of its real and imaginary part in two double values. Class
  * contains a handful of methods used to manipulate over operations with Complex
- * numbers
+ * numbers.
  * 
  * @author juren
  *
  */
 public class Complex {
 
+	/** Complex number representing zero */
 	public static final Complex ZERO = new Complex(0, 0);
+	/** Complex number representing one */
 	public static final Complex ONE = new Complex(1, 0);
+	/** Complex number representing minus one */
 	public static final Complex ONE_NEG = new Complex(-1, 0);
+	/** Complex number representing imaginary one */
 	public static final Complex IM = new Complex(0, 1);
+	/** Complex number representing imaginary minus one */
 	public static final Complex IM_NEG = new Complex(0, -1);
 
 	/**
@@ -189,7 +194,7 @@ public class Complex {
 	@Override
 	public String toString() {
 		if (im >= 0)
-			return "(" + re + "+i" + Math.abs(im)+ ")";
+			return "(" + re + "+i" + Math.abs(im) + ")";
 		return "(" + re + "-i" + (-1) * im + ")";
 	}
 

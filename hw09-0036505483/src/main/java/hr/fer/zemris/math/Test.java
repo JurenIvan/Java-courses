@@ -2,14 +2,14 @@ package hr.fer.zemris.math;
 
 /**
  * Class containing main method used to demonstrate basic functionalities with
- * {@link Vector3} class
+ * {@link Vector3} class.
  * 
  * @author juren
  *
  */
 public class Test {
 	/**
-	 * Main method used to start the main program
+	 * Main method used to start the main program.
 	 * 
 	 * @param args not used
 	 */

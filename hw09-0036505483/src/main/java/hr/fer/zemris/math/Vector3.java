@@ -41,7 +41,7 @@ public class Vector3 {
 	/**
 	 * Method used to normalize vector. Returns new one.
 	 * 
-	 * @return referece to new vector
+	 * @return reference to new vector
 	 */
 	public Vector3 normalized() {
 		double vectorLenght = norm();
@@ -94,7 +94,7 @@ public class Vector3 {
 	}
 
 	/**
-	 * method that scales this vectors with given constant.
+	 * Method that scales this vectors with given constant.
 	 * 
 	 * @param s factor
 	 * @return new enlarged vector
@@ -104,7 +104,7 @@ public class Vector3 {
 	}
 
 	/**
-	 * method that calculates angle between this and other vector
+	 * Method that calculates angle between this and other vector
 	 * 
 	 * @param other vector
 	 * @return angle
@@ -115,6 +115,7 @@ public class Vector3 {
 	}
 
 	/**
+	 * Standard getter.
 	 * @return the x
 	 */
 	public double getX() {
@@ -122,6 +123,7 @@ public class Vector3 {
 	}
 
 	/**
+	 * Standard getter.
 	 * @return the y
 	 */
 	public double getY() {
@@ -129,6 +131,7 @@ public class Vector3 {
 	}
 
 	/**
+	 * Standard getter.
 	 * @return the z
 	 */
 	public double getZ() {

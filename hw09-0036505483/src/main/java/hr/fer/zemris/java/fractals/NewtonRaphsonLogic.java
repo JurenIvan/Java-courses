@@ -15,7 +15,7 @@ import hr.fer.zemris.math.ComplexRootedPolynomial;
  */
 public class NewtonRaphsonLogic {
 	/**
-	 * constant that determines convergence threshold
+	 * Constant that determines convergence threshold
 	 */
 	private static double convergenceThreshold = 0.002;
 
@@ -43,7 +43,7 @@ public class NewtonRaphsonLogic {
 		int offset = yMin * width;
 		double module;
 
-		for (int y = yMin; y < yMax; y++) {
+		for (int y = yMin; y <= yMax; y++) {
 			if (cancel.get())
 				break;
 			for (int x = 0; x < width; x++) {

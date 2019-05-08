@@ -9,30 +9,50 @@ import hr.fer.zemris.java.raytracer.model.Ray;
 import hr.fer.zemris.java.raytracer.model.RayIntersection;
 import hr.fer.zemris.java.raytracer.model.Scene;
 
-public class Util {
+/**
+ * Class that holds static methods that is used by both {@link RayCaster} and
+ * {@link RayCasterParallel2} and its used for determining color of pixel of
+ * certain ray.
+ * 
+ * Hence package private modifier.
+ * 
+ * @author juren
+ *
+ */
+class ReyTracerUtil {
 
-	 protected static void tracer(Scene scene, Ray ray, short[] rgb) {
-		rgb[0] = 15;
-		rgb[1] = 15;
-		rgb[2] = 15;
+	/**
+	 * Constructor for RayTracerUtil
+	 */
+	public ReyTracerUtil() {
+	}
+
+	/**
+	 * Method used to fill rgb array with appropriate color combination for given
+	 * scene and ray.
+	 * 
+	 * @param scene scene that will be visualized
+	 * @param ray   ray of light for which we want to determine colors
+	 * @param rgb   array of three short variables through which we return colors
+	 */
+	static void tracer(Scene scene, Ray ray, short[] rgb) {
+		rgb[0] = rgb[1] = rgb[2] = 15;
+
 		RayIntersection closest = findClosestIntersection(scene, ray);
 		if (closest == null) {
-			rgb[0] = 0;
-			rgb[1] = 0;
-			rgb[2] = 0;
-
+			rgb[0] = rgb[1] = rgb[2] = 0;
 			return;
 		}
 		for (LightSource light : scene.getLights()) {
 			Ray r = Ray.fromPoints(light.getPoint(), closest.getPoint());
-
 			RayIntersection s = findClosestIntersection(scene, r);
+			if (s == null)
+				continue;
 
-			if(s==null) continue;
-			if (s != null && closest.getPoint().sub(light.getPoint()).norm() > s.getDistance() + 0.00001) {
+			if (closest.getPoint().sub(light.getPoint()).norm() > s.getDistance() + 0.00001) {
 				continue;
 			}
-			
+
 			double ln = r.direction.negate().scalarProduct(s.getNormal());
 			if (ln > 0) {
 				rgb[0] = (short) (rgb[0] + light.getR() * s.getKdr() * ln);
@@ -43,7 +63,6 @@ public class Util {
 			Point3D reflVec = r.direction
 					.sub(s.getNormal().scalarMultiply(r.direction.scalarProduct(s.getNormal()) * 2));
 			Point3D v = ray.direction.negate();
-
 			double rv = reflVec.scalarProduct(v);
 			if (rv < 0)
 				continue;
@@ -54,6 +73,14 @@ public class Util {
 
 	}
 
+	/**
+	 * Method that finds intersectionPoint that is closest to the start of ray or
+	 * null if no intersection is found.
+	 * 
+	 * @param scene where ray is casted
+	 * @param ray   that is casted
+	 * @return {@link RayIntersection} of interaction or null if no colisions happen
+	 */
 	private static RayIntersection findClosestIntersection(Scene scene, Ray ray) {
 		List<GraphicalObject> objects = scene.getObjects();
 		RayIntersection closestIntersection = null;
@@ -73,5 +100,5 @@ public class Util {
 		}
 		return closestIntersection;
 	}
-	
+
 }
