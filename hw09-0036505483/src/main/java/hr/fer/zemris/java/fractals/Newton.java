@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import hr.fer.zemris.java.fractals.viewer.FractalViewer;
@@ -28,7 +27,7 @@ import hr.fer.zemris.math.ComplexRootedPolynomial;
 public class Newton {
 
 	/**
-	 * Constant that holds string used at the beggining of program.
+	 * Constant that holds string used at the beginning of program.
 	 */
 	private static final String WELCOME_MESSAGE = "Welcome to Newton-Raphson iteration-based fractal viewer."
 			+ "\r\nPlease enter at least two roots, one root per line. Enter 'done' when done.";
@@ -84,8 +83,8 @@ public class Newton {
 		 */
 		public MojProducer(ComplexRootedPolynomial inputPolinomial) {
 			this.polynom = Objects.requireNonNull(inputPolinomial, "Cannot have null reference as a polynome");
-			pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), (e) -> {
-				Thread t = new Thread();
+			pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), (r) -> {
+				Thread t = new Thread(r);
 				t.setDaemon(true);
 				return t;
 			});
@@ -120,7 +119,6 @@ public class Newton {
 				} catch (InterruptedException | ExecutionException e) {
 				}
 			}
-			pool.shutdown();
 			System.out.println("Calculation completed. GUI update!");
 			observer.acceptResult(data, (short) (polynom.toComplexPolynom().order() + 1), requestNo);
 		}
