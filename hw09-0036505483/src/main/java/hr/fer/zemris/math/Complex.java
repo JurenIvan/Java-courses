@@ -30,18 +30,16 @@ public class Complex {
 	/**
 	 * Real part of complex number
 	 */
-	private double re;
+	private final double re;
 	/**
 	 * Imaginary part of complex number
 	 */
-	private double im;
+	private final double im;
 
 	/**
 	 * Constructor for ComplexNumber that creates an instance with real and
 	 * imaginary values set to one.
 	 * 
-	 * @param real      part of Complex number
-	 * @param imaginary part of Complex number
 	 */
 	public Complex() {
 		re = 1;
@@ -52,8 +50,8 @@ public class Complex {
 	 * Constructor for ComplexNumber that creates an instance with provided real and
 	 * imaginary pair of values.
 	 * 
-	 * @param real      part of Complex number
-	 * @param imaginary part of Complex number
+	 * @param re      part of Complex number
+	 * @param im part of Complex number
 	 */
 	public Complex(double re, double im) {
 		this.re = re;
@@ -74,7 +72,7 @@ public class Complex {
 	 * Method that multiplies two ComplexNumbers and returns ComplexNumber that is
 	 * result of multiplication of the two.
 	 * 
-	 * @param other Complex number
+	 * @param c Complex number
 	 * @return ComplexNumber that is result of multiplication.
 	 * @throws NullPointerException if referenced ComplexNumber is null
 	 */
@@ -90,7 +88,7 @@ public class Complex {
 	 * Method that divides two ComplexNumbers and returns ComplexNumber that is
 	 * result of dividing the two.
 	 * 
-	 * @param other Complex number
+	 * @param c Complex number
 	 * @return ComplexNumber that is quotient of the two.
 	 * @throws NullPointerException if referenced ComplexNumber is null // * @throws
 	 *                              ArithmeticException if other ComplexNumber
@@ -111,7 +109,7 @@ public class Complex {
 	 * Method that adds two ComplexNumbers and returns ComplexNumber that is sum of
 	 * the two.
 	 * 
-	 * @param other Complex number
+	 * @param c Complex number
 	 * @return ComplexNumber that is sum of two.
 	 * @throws NullPointerException if referenced ComplexNumber is null
 	 */
@@ -126,7 +124,7 @@ public class Complex {
 	 * Method that subtracts two ComplexNumbers and returns ComplexNumber that is
 	 * difference of the two.
 	 * 
-	 * @param other Complex number
+	 * @param c Complex number
 	 * @return ComplexNumber that is difference of two.
 	 * @throws NullPointerException if referenced ComplexNumber is null
 	 */
@@ -137,6 +135,11 @@ public class Complex {
 		return new Complex(this.re - c.re, im - c.im);
 	}
 
+	/**
+	 * Returns new complex number that is this one negated.
+	 * 
+	 * @return negated complex number
+	 */
 	public Complex negate() {
 		return new Complex(-re, -im);
 	}

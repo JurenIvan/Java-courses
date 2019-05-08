@@ -9,11 +9,11 @@ package hr.fer.zemris.math;
 public class Vector3 {
 
 	/** Point/vector x-component */
-	private double x;
+	private final double x;
 	/** Point/vector y-component */
-	private double y;
+	private final double y;
 	/** Point/vector z-component */
-	private double z;
+	private final double z;
 
 	/**
 	 * Constructor for Vector

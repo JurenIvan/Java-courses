@@ -48,18 +48,20 @@ public class Util {
 		System.out.print(ROOT_PROMPT + counter + PROMPT_SYMBOL + " ");
 		while (sc.hasNext()) {
 			try {
-				Complex parsed = parseComplex(sc.next());
+				Complex parsed = parseComplex(sc.nextLine());
 				if (parsed == null) {
 					if (roots.size() >= 2) {
 						break;
 					}
-					System.out.println("Not enough roots to make polynome");
+					System.out.println("Not enough roots to make polynomial");
+					System.out.print(ROOT_PROMPT + counter + PROMPT_SYMBOL + " ");
 					continue;
 				}
 				roots.add(parsed);
 			} catch (NumberFormatException e) {
 				System.out.println("Illegal number format.");
 				System.out.println(e.getMessage());
+				System.out.print(ROOT_PROMPT + counter + PROMPT_SYMBOL + " ");
 				continue;
 			}
 			System.out.print(ROOT_PROMPT + ++counter + PROMPT_SYMBOL + " ");

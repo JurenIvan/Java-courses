@@ -22,11 +22,24 @@ import hr.fer.zemris.java.raytracer.model.Scene;
  */
 public class MultiThreadedReyTracerUtil extends ReyTracerUtil {
 
+	/**
+	 * Variable that stores scene that is drawn
+	 */
 	private Scene scene;
+	/**
+	 * Variable that stores pool of threads
+	 */
+	private ForkJoinPool pool;
 
+	/**
+	 * Standard construstor for {@link MultiThreadedReyTracerUtil} class
+	 * 
+	 * @param scene
+	 */
 	public MultiThreadedReyTracerUtil(Scene scene) {
 		super();
 		this.scene = scene;
+		pool = new ForkJoinPool();
 	}
 
 	/**
@@ -41,20 +54,17 @@ public class MultiThreadedReyTracerUtil extends ReyTracerUtil {
 			@Override
 			public void produce(Point3D eye, Point3D view, Point3D viewUp, double horizontal, double vertical,
 					int width, int height, long requestNo, IRayTracerResultObserver observer, AtomicBoolean cancel) {
-				System.out.println("Započinjem izračune...");
 
 				short[] red = new short[width * height];
 				short[] green = new short[width * height];
 				short[] blue = new short[width * height];
 
-				ForkJoinPool pool = new ForkJoinPool();
+				// ForkJoinPool pool = new ForkJoinPool();
 				pool.invoke(new JobToDo(eye, view, viewUp, horizontal, vertical, width, height, requestNo, observer,
 						cancel, red, green, blue, 0, 0, height));
-				pool.shutdown();
+				// pool.shutdown();
 
-				System.out.println("Izračuni gotovi...");
 				observer.acceptResult(red, green, blue, requestNo);
-				System.out.println("Dojava gotova...");
 			}
 
 		};
@@ -110,7 +120,7 @@ public class MultiThreadedReyTracerUtil extends ReyTracerUtil {
 		/** array that stores data for blue color */
 		private short[] blue;
 
-		/** variable used to calculate offset used by diferent threads */
+		/** variable used to calculate offset used by different threads */
 		private int offset;
 
 		/** first row that is processed by thread */
@@ -128,9 +138,17 @@ public class MultiThreadedReyTracerUtil extends ReyTracerUtil {
 		 * @param horizontal horizontal width of observed space
 		 * @param vertical   vertical width of observed space
 		 * @param width      number of pixels per screen row
-		 * @param height     number of pixels per screen collumns
+		 * @param height     number of pixels per screen columns
 		 * @param requestNo  used internally and must be passed on to GUI observer with
 		 *                   rendered image
+		 * @param blue       array that stores data for blue color
+		 * @param green      array that stores data for green color
+		 * @param red        array that stores data for red color
+		 * @param offset     variable used to calculate offset used by different threads
+		 * @param yMin       first row that is processed by thread
+		 * @param yMax       last row that is processed by thread
+		 * 
+		 * 
 		 * @param observer   GUI observer that will accept and display image this
 		 *                   producer creates
 		 * @param cancel     GUI observer that will accept and display image this

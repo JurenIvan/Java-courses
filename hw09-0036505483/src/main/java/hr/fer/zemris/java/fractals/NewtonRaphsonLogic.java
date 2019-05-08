@@ -25,7 +25,7 @@ public class NewtonRaphsonLogic {
 	 * @param reMin      Lower limit to real part of complex number used.
 	 * @param reMax      Upper limit to real part of complex number used.
 	 * @param imMin      Lower limit to imaginary part of complex number used.
-	 * @param imMaxUpper limit to imaginary part of complex number used.
+	 * @param imMax limit to imaginary part of complex number used.
 	 * @param width      width of GUI in pixels
 	 * @param height     height of GUI in pixels
 	 * @param yMin       first y coordinate for which this part of job is
@@ -42,7 +42,9 @@ public class NewtonRaphsonLogic {
 
 		int offset = yMin * width;
 		double module;
-
+		
+		ComplexPolynomial derived = polynom.toComplexPolynom().derive();
+		
 		for (int y = yMin; y <= yMax; y++) {
 			if (cancel.get())
 				break;
@@ -52,9 +54,7 @@ public class NewtonRaphsonLogic {
 				double im = imMin + (height - 1.0 - y) / (height - 1) * (imMax - imMin);
 				Complex c = new Complex(re, im);
 				short iter = 0;
-
-				ComplexPolynomial complexPolynomial = polynom.toComplexPolynom();
-				ComplexPolynomial derived = complexPolynomial.derive();
+				
 
 				do {
 					Complex numerator = polynom.apply(c);

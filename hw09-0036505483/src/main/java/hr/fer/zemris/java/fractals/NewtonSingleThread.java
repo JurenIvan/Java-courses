@@ -81,7 +81,7 @@ public class NewtonSingleThread {
 			int m = NUMBER_OF_ITERATIONS;
 			short[] data = new short[width * height];
 
-			NewtonRaphsonLogic.calculate(reMin, reMax, imMin, imMax, width, height, m, 0, height, data, cancel,
+			NewtonRaphsonLogic.calculate(reMin, reMax, imMin, imMax, width, height, m, 0, height-1, data, cancel,
 					polynom);
 
 			System.out.println("Calculation completed. GUI update!");

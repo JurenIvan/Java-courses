@@ -15,11 +15,11 @@ public class ComplexRootedPolynomial {
 	/**
 	 * Array that stores coefficient of Complex polynomial
 	 */
-	private Complex[] coefficient;
+	private final Complex[] coefficient;
 	/**
 	 * Complex number representing a in polynomial a*(x-n1)(x-2)
 	 */
-	private Complex factor;
+	private final Complex factor;
 
 	/**
 	 * Constructor that creates new Polynomial
@@ -54,7 +54,7 @@ public class ComplexRootedPolynomial {
 	 * threshold.
 	 * 
 	 * @param z        complex number that is supposed to be close to a root
-	 * @param treshold radius of acceptance for finding root
+	 * @param threshold radius of acceptance for finding root
 	 * @return index of root
 	 */
 	public int indexOfClosestRootFor(Complex z, double threshold) {

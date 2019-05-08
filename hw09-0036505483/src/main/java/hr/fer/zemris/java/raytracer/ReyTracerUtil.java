@@ -46,10 +46,8 @@ class ReyTracerUtil {
 		for (LightSource light : scene.getLights()) {
 			Ray r = Ray.fromPoints(light.getPoint(), closest.getPoint());
 			RayIntersection s = findClosestIntersection(scene, r);
-			if (s == null)
-				continue;
-
-			if (closest.getPoint().sub(light.getPoint()).norm() > s.getDistance() + 0.00001) {
+		
+			if (s == null || closest.getPoint().sub(light.getPoint()).norm() > s.getDistance() + 0.00001) {
 				continue;
 			}
 
@@ -60,9 +58,10 @@ class ReyTracerUtil {
 				rgb[2] = (short) (rgb[2] + light.getB() * s.getKdb() * ln);
 			}
 
-			Point3D reflVec = r.direction
-					.sub(s.getNormal().scalarMultiply(r.direction.scalarProduct(s.getNormal()) * 2));
+			double rs = 2 * r.direction.scalarProduct(s.getNormal());
+			Point3D reflVec = r.direction.sub(s.getNormal().scalarMultiply(rs));
 			Point3D v = ray.direction.negate();
+
 			double rv = reflVec.scalarProduct(v);
 			if (rv < 0)
 				continue;

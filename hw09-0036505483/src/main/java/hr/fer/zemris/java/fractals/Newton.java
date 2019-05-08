@@ -79,7 +79,7 @@ public class Newton {
 		/**
 		 * Standard constructor for {@link MojProducer}
 		 * 
-		 * @param polynom that is drawn
+		 * @param inputPolinomial that is drawn
 		 */
 		public MojProducer(ComplexRootedPolynomial inputPolinomial) {
 			this.polynom = Objects.requireNonNull(inputPolinomial, "Cannot have null reference as a polynome");
@@ -187,7 +187,7 @@ public class Newton {
 		 * @param reMin      Lower limit to real part of complex number used.
 		 * @param reMax      Upper limit to real part of complex number used.
 		 * @param imMin      Lower limit to imaginary part of complex number used.
-		 * @param imMaxUpper limit to imaginary part of complex number used.
+		 * @param imMax		 limit to imaginary part of complex number used.
 		 * @param width      width of GUI in pixels
 		 * @param height     height of GUI in pixels
 		 * @param yMin       first y coordinate for which this part of job is
