@@ -53,7 +53,7 @@ public class RayCasterParallel2 {
 
 			@Override
 			public long getTargetTimeFrameDuration() {
-				return 150; // redraw scene each 150 milliseconds
+				return 30; // redraw scene each 150 milliseconds
 			}
 
 			@Override
