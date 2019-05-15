@@ -10,7 +10,9 @@ public class JButtonNumber extends MyJButton {
 	private int digit;
 
 	public JButtonNumber(int digit, CalcModel model) {
+		
 		super(digit + "", model);
+		setFont(getFont().deriveFont(30f));
 		try {
 			addActionListener((e) -> model.insertDigit(digit));
 		} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e) {

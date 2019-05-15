@@ -52,11 +52,10 @@ public class CalcModelImpl implements CalcModel {
 		if (value < 0) {
 			value = value * (-1);
 			isNegative = true;
+		} else {
+			isNegative = false;	
 		}
-		if (value == Double.NaN) {
-			isNegative = false;
-		}
-
+		
 		this.currValue = value;
 		currValueString = String.valueOf(value);
 		editable = false;
@@ -153,7 +152,6 @@ public class CalcModelImpl implements CalcModel {
 		}
 		this.activeOperand = activeOperand;
 		activeOperatorSet = true;
-		notifyObservers();
 	}
 
 	@Override

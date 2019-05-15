@@ -10,7 +10,7 @@ public class BarChart {
 	private double minY;
 	private double maxY;
 	private double stepY;
-	
+
 	/**
 	 * @param list
 	 * @param xDescription
@@ -21,11 +21,14 @@ public class BarChart {
 	 */
 	public BarChart(List<XYValue> list, String xDescription, String yDescription, double minY, double maxY,
 			double stepY) {
-		for(var elem:list) {
-			if(elem.getY()<minY) throw new IllegalArgumentException();
+
+		for (var elem : list) {
+			if (elem.getY() < minY)
+				throw new IllegalArgumentException();
 		}
-		if(minY<0) throw new IllegalArgumentException();
-		if(maxY<minY) throw new IllegalArgumentException();
+		if (minY < 0 || maxY < minY)
+			throw new IllegalArgumentException();
+
 		this.list = list;
 		this.xDescription = xDescription;
 		this.yDescription = yDescription;
@@ -33,7 +36,47 @@ public class BarChart {
 		this.maxY = maxY;
 		this.stepY = stepY;
 	}
-	
-	
-	
+
+	/**
+	 * @return the list
+	 */
+	public List<XYValue> getList() {
+		return list;
+	}
+
+	/**
+	 * @return the xDescription
+	 */
+	public String getxDescription() {
+		return xDescription;
+	}
+
+	/**
+	 * @return the yDescription
+	 */
+	public String getyDescription() {
+		return yDescription;
+	}
+
+	/**
+	 * @return the minY
+	 */
+	public double getMinY() {
+		return minY;
+	}
+
+	/**
+	 * @return the maxY
+	 */
+	public double getMaxY() {
+		return maxY;
+	}
+
+	/**
+	 * @return the stepY
+	 */
+	public double getStepY() {
+		return stepY;
+	}
+
 }

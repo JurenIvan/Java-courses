@@ -4,7 +4,7 @@ import java.util.function.DoubleBinaryOperator;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
-import hr.fer.zemris.java.gui.calc.model.JRadioButtonImpl;
+import hr.fer.zemris.java.gui.calc.model.JCheckBoxImpl;
 import hr.fer.zemris.java.gui.calc.model.NameListener;
 
 public class JButtonBinarOp extends MyJButton implements NameListener {
@@ -14,10 +14,10 @@ public class JButtonBinarOp extends MyJButton implements NameListener {
 	private String[] name;
 	private DoubleBinaryOperator bifunc;
 	private DoubleBinaryOperator bifuncInversed;
-	private JRadioButtonImpl inv;
+	private JCheckBoxImpl inv;
 
 	public JButtonBinarOp(DoubleBinaryOperator bifunc, DoubleBinaryOperator bifuncInversed, String nameNormal,
-			String nameInversed, JRadioButtonImpl inv, CalcModel model) {
+			String nameInversed, JCheckBoxImpl inv, CalcModel model) {
 		super(nameNormal, model);
 
 		name = new String[2];
@@ -46,7 +46,7 @@ public class JButtonBinarOp extends MyJButton implements NameListener {
 
 	}
 
-	public JButtonBinarOp(DoubleBinaryOperator bifunc, String nameNormal, JRadioButtonImpl inv, CalcModel model) {
+	public JButtonBinarOp(DoubleBinaryOperator bifunc, String nameNormal, JCheckBoxImpl inv, CalcModel model) {
 		this(bifunc, bifunc, nameNormal, nameNormal, inv, model);
 	}
 

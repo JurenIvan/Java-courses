@@ -3,10 +3,10 @@ package hr.fer.zemris.java.gui.calc.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.JRadioButton;
+import javax.swing.JCheckBox;
 
 
-public class JRadioButtonImpl extends JRadioButton {
+public class JCheckBoxImpl extends JCheckBox {
 
 	/**
 	 * 
@@ -14,7 +14,7 @@ public class JRadioButtonImpl extends JRadioButton {
 	private static final long serialVersionUID = 1L;
 	Set<NameListener> listeners;
 	
-	public JRadioButtonImpl() {
+	public JCheckBoxImpl() {
 		listeners=new HashSet<>();
 		addActionListener((e)->notifyObservers());
 	}

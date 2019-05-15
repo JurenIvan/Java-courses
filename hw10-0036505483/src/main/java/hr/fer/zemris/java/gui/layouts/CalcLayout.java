@@ -91,8 +91,8 @@ public class CalcLayout implements LayoutManager2 {
 					h = (int) dimOfComp.getHeight();
 				}
 				if (componentConstraints.get(c).equals(new RCPosition(1, 1))) {
-					if (dimOfComp.getWidth() < w * 3 + 2 * spacer) {
-						w = ((int) dimOfComp.getWidth() - 2 * spacer) / 3;
+					if (dimOfComp.getWidth() < w * 5 + 3 * spacer) {
+						w = ((int) dimOfComp.getWidth() - 4 * spacer) / 5;
 					}
 				} else {
 					if (dimOfComp.getWidth() < w) {
@@ -114,8 +114,8 @@ public class CalcLayout implements LayoutManager2 {
 					h = (int) dimOfComp.getHeight();
 				}
 				if (componentConstraints.get(c).equals(new RCPosition(1, 1))) {
-					if (dimOfComp.getWidth() > w * 3 + 2 * spacer) {
-						w = ((int) dimOfComp.getWidth() - 2 * spacer) / 3;
+					if (dimOfComp.getWidth() > w * 5 + 4 * spacer) {
+						w = ((int) dimOfComp.getWidth() - 4 * spacer) / 5;
 					}
 				} else {
 					if (dimOfComp.getWidth() > w) {
@@ -139,6 +139,7 @@ public class CalcLayout implements LayoutManager2 {
 
 		for (var c : componentConstraints.keySet()) {
 			RCPosition rcPos = componentConstraints.get(c);
+			
 			int x = (int) Math.round(widthOfComponent * (rcPos.getColumn() - 1.0) + spacer * (rcPos.getColumn() - 1.0));
 			int y = (int) Math.round(heightOfComponent * (rcPos.getRow() - 1.0) + ((rcPos.getRow() - 1.0) * spacer));
 
@@ -150,19 +151,18 @@ public class CalcLayout implements LayoutManager2 {
 						(int) Math.round(heightOfComponent));
 			}
 		}
-
 	}
 
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {
-		if(constraints instanceof String) {
-			String[] splited=((String) constraints).split(",");
-			constraints=new RCPosition(Integer.parseInt(splited[0]), Integer.parseInt(splited[1]));
+		if (constraints instanceof String) {
+			String[] splited = ((String) constraints).split(",");
+			constraints = new RCPosition(Integer.parseInt(splited[0]), Integer.parseInt(splited[1]));
 		}
-		
+
 		if (!(constraints instanceof RCPosition))
 			throw new UnsupportedOperationException("Only RCPosition type allowed as border");
-		
+
 		if (!checkBorders((RCPosition) constraints))
 			throw new UnsupportedOperationException("Invalid position");
 

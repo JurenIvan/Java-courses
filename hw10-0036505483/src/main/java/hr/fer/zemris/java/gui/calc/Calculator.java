@@ -14,7 +14,7 @@ import hr.fer.zemris.java.gui.calc.buttons.JButtonSpecial;
 import hr.fer.zemris.java.gui.calc.buttons.JButtonUnaryOp;
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.JLabelImpl;
-import hr.fer.zemris.java.gui.calc.model.JRadioButtonImpl;
+import hr.fer.zemris.java.gui.calc.model.JCheckBoxImpl;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 
 public class Calculator extends JFrame {
@@ -30,7 +30,7 @@ public class Calculator extends JFrame {
 		Stack<Double> stack = new Stack<Double>();
 		CalcModel model = new CalcModelImpl();
 		JLabelImpl display = new JLabelImpl();
-		JRadioButtonImpl jrb = new JRadioButtonImpl();
+		JCheckBoxImpl jrb = new JCheckBoxImpl();
 		
 		model.addCalcValueListener(display);
 		Container cp = getContentPane();
@@ -74,23 +74,23 @@ public class Calculator extends JFrame {
 		display.setOpaque(true);
 	}
 
-	private void configureBinaryOperators(Container cp, CalcModel model, JRadioButtonImpl jrb) {
+	private void configureBinaryOperators(Container cp, CalcModel model, JCheckBoxImpl jrb) {
 		cp.add(new JButtonBinarOp((a, b) -> a / b, "/", jrb, model), "2,6");
 		cp.add(new JButtonBinarOp((a, b) -> a * b, "*", jrb, model), "3,6");
 		cp.add(new JButtonBinarOp((a, b) -> a - b, "-", jrb, model), "4,6");
 		cp.add(new JButtonBinarOp((a, b) -> a + b, "+", jrb, model), "5,6");
-		cp.add(new JButtonBinarOp((a, b) -> Math.pow(a, b), (a, b) -> Math.pow(a, 1 / b), "x^n", "x^(1/n)", jrb, model),
+		cp.add(new JButtonBinarOp((a, b) -> Math.pow(a, 1 / b),(a, b) -> Math.pow(a, b), "x^n", "x^(1/n)", jrb, model),
 				"5,1");
 	}
 
-	private void configureUnaryOperators(Container cp, CalcModel model, JRadioButtonImpl jrb) {
+	private void configureUnaryOperators(Container cp, CalcModel model, JCheckBoxImpl jrb) {
 		cp.add(new JButtonUnaryOp((a) -> 1 / a, "1/x", jrb, model), "2,1");
 		cp.add(new JButtonUnaryOp((a) -> Math.sin(a), (a) -> Math.asin(a), "sin", "arcsin", jrb, model), "2,2");
 		cp.add(new JButtonUnaryOp((a) -> Math.log10(a), (a) -> Math.pow(10, a), "log", "10^x", jrb, model), "3,1");
 		cp.add(new JButtonUnaryOp((a) -> Math.cos(a), (a) -> Math.acos(a), "cos", "arccos", jrb, model), "3,2");
 		cp.add(new JButtonUnaryOp((a) -> Math.log(a), (a) -> Math.pow(Math.E, a), "ln", "e^x", jrb, model), "4,1");
 		cp.add(new JButtonUnaryOp((a) -> Math.tan(a), (a) -> Math.atan(a), "tan", "atan", jrb, model), "4,2");
-		cp.add(new JButtonUnaryOp((a) -> 1 / Math.tan(a), (a) -> 1 / Math.atan(a), "ctg", "arcctg", jrb, model), "5,2");
+		cp.add(new JButtonUnaryOp((a) -> 1 / Math.tan(a), (a) -> Math.PI / 2 - Math.atan(a), "ctg", "arcctg", jrb, model), "5,2");
 	}
 
 	private void configureDigitsButtons(Container cp, CalcModel model) {
