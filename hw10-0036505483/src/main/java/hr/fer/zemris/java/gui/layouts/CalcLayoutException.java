@@ -1,10 +1,13 @@
 package hr.fer.zemris.java.gui.layouts;
 
+/**
+ * RuntimeException thrown to indicate calculatorLayout error.
+ * 
+ * @author juren
+ *
+ */
 public class CalcLayoutException extends RuntimeException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -22,6 +25,5 @@ public class CalcLayoutException extends RuntimeException {
 	public CalcLayoutException() {
 		super();
 	}
-	
-	
+
 }

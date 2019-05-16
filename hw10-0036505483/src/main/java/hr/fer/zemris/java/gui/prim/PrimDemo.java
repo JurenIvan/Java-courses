@@ -19,63 +19,96 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-
-public class PrimDemo extends JFrame  {
+/**
+ * Class containing main method used to demonstrate functionalities of class. It
+ * is gui of 2 lists that can show primes.
+ * 
+ * @author juren
+ *
+ */
+public class PrimDemo extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constructor for PrimDemo class
+	 */
 	public PrimDemo() {
 		setLocation(20, 50);
 		setSize(300, 200);
 		setTitle("Primes lists");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
+
 		initGUI();
 	}
 
-	static class DemoListModel<T> implements ListModel<T> {
+	/**
+	 * Private static class just that models gui with two lists.
+	 * 
+	 * @author juren
+	 * 
+	 */
+	static class DemoListModel implements ListModel<Integer> {
+		/**
+		 * List containing elements shown in gui
+		 */
+		private List<Integer> elements = new ArrayList<>();
+		/**
+		 * List of observers
+		 */
+		private List<ListDataListener> listeners = new ArrayList<>();
 
-		private List<T> elementi = new ArrayList<>();
-		private List<ListDataListener> promatraci = new ArrayList<>();
+		/**
+		 * Constructor that sets initial state.
+		 */
+		public DemoListModel() {
+			add(1);
+		}
 
 		@Override
 		public void addListDataListener(ListDataListener l) {
-			promatraci.add(l);
+			listeners.add(l);
 		}
 
 		@Override
 		public void removeListDataListener(ListDataListener l) {
-			promatraci.remove(l);
+			listeners.remove(l);
 		}
 
 		@Override
 		public int getSize() {
-			return elementi.size();
+			return elements.size();
 		}
 
 		@Override
-		public T getElementAt(int index) {
-			return elementi.get(index);
+		public Integer getElementAt(int index) {
+			return elements.get(index);
 		}
 
-		public void add(T element) {
-			int pos = elementi.size();
-			elementi.add(element);
-
+		/**
+		 * Method that adds number and appropriate listener onto it
+		 * 
+		 * @param element number shown as text on part of gui
+		 */
+		public void add(Integer element) {
+			int pos = elements.size();
+			elements.add(element);
 			ListDataEvent event = new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, pos, pos);
-			for (ListDataListener l : promatraci) {
+			for (ListDataListener l : listeners) {
 				l.intervalAdded(event);
 			}
 		}
-
 	}
 
+	/**
+	 * Method used to clear up the constructor.Contains commands to configure GUI.
+	 */
 	private void initGUI() {
 		iteratorImpl iter = new iteratorImpl();
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
 
-		DemoListModel<Integer> model = new DemoListModel<>();
+		DemoListModel model = new DemoListModel();
 
 		JList<Integer> list1 = new JList<>(model);
 		JList<Integer> list2 = new JList<>(model);
@@ -84,7 +117,6 @@ public class PrimDemo extends JFrame  {
 
 		JButton dodaj = new JButton("Dodaj");
 		bottomPanel.add(dodaj);
-		model.add(1);
 
 		dodaj.addActionListener(e -> {
 			model.add(iter.next());
@@ -98,6 +130,11 @@ public class PrimDemo extends JFrame  {
 		cp.add(bottomPanel, BorderLayout.PAGE_END);
 	}
 
+	/**
+	 * Main method used to start program and demonstrate it's functionalities
+	 * 
+	 * @param args not used.
+	 */
 	public static void main(String[] args) {
 
 		SwingUtilities.invokeLater(() -> {
@@ -107,8 +144,15 @@ public class PrimDemo extends JFrame  {
 		});
 	}
 
+	/**
+	 * private static class that holds implementation of iterator that is able to
+	 * produce prime numbers.
+	 * 
+	 * @author juren
+	 *
+	 */
 	private static class iteratorImpl implements Iterator<Integer> {
-		
+
 		/**
 		 * Variable that stores last calculated prime.
 		 */

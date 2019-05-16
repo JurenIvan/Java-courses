@@ -7,9 +7,9 @@ public class BarChart {
 	private List<XYValue> list;
 	private String xDescription;
 	private String yDescription;
-	private double minY;
-	private double maxY;
-	private double stepY;
+	private int minY;
+	private int maxY;
+	private int stepY;
 
 	/**
 	 * @param list
@@ -19,8 +19,8 @@ public class BarChart {
 	 * @param maxY
 	 * @param stepY
 	 */
-	public BarChart(List<XYValue> list, String xDescription, String yDescription, double minY, double maxY,
-			double stepY) {
+	public BarChart(List<XYValue> list, String xDescription, String yDescription, int minY, int maxY,
+			int stepY) {
 
 		for (var elem : list) {
 			if (elem.getY() < minY)
@@ -61,22 +61,23 @@ public class BarChart {
 	/**
 	 * @return the minY
 	 */
-	public double getMinY() {
+	public int getMinY() {
 		return minY;
 	}
 
 	/**
 	 * @return the maxY
 	 */
-	public double getMaxY() {
+	public int getMaxY() {
 		return maxY;
 	}
 
 	/**
 	 * @return the stepY
 	 */
-	public double getStepY() {
+	public int getStepY() {
 		return stepY;
 	}
 
+	
 }

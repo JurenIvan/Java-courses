@@ -22,14 +22,10 @@ public class BarChartDemo extends JFrame {
 	private static Path pathToFile;
 
 	public BarChartDemo() {
-
 		setLocation(20, 50);
-		setTitle("Primes lists");
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setVisible(true);
 		initGUI();
 		pack();
-
 	}
 
 	private void initGUI() {
@@ -61,16 +57,21 @@ public class BarChartDemo extends JFrame {
 				String splitted2[] = s.split(",");
 				list.add(new XYValue(Integer.parseInt(splitted2[0]), Integer.parseInt(splitted2[1])));
 			}
-			barChart = new BarChart(list, lines[0], lines[1], Double.parseDouble(lines[3]),
-					Double.parseDouble(lines[4]), Double.parseDouble(lines[5]));
+			barChart = new BarChart(list, lines[0], lines[1], Integer.parseInt(lines[3]),
+					Integer.parseInt(lines[4]), Integer.parseInt(lines[5]));
 		} catch (IOException e) {
 			System.out.println("Invalid input path");
+			return;
 		} catch (NumberFormatException e) {
 			System.out.println("Illegal number format");
+			return;
 		}
 
 		SwingUtilities.invokeLater(() -> {
 			JFrame frame = new BarChartDemo();
+			frame.setTitle("Primes lists");
+			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			frame.setSize(640, 400);
 		});
 
 	}

@@ -2,10 +2,24 @@ package hr.fer.zemris.java.gui.layouts;
 
 import java.util.Objects;
 
+/**
+ * Class that represents structure whose variables stores position of components
+ * 
+ * @author juren
+ *
+ */
 public class RCPosition {
-	private final int row;
-	private final int column;
 	/**
+	 * variable that stores row
+	 */
+	private final int row;
+	/**
+	 * variable that stores column
+	 */
+	private final int column;
+
+	/**
+	 * Standard constructor.
 	 * @param row
 	 * @param column
 	 */
@@ -14,28 +28,36 @@ public class RCPosition {
 		this.row = row;
 		this.column = column;
 	}
+
 	/**
+	 * Standard getter.
 	 * @return the row
 	 */
 	public int getRow() {
 		return row;
 	}
+
 	/**
+	 * Standard getter.
 	 * @return the column
 	 */
 	public int getColumn() {
 		return column;
 	}
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(column, row);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -49,7 +71,5 @@ public class RCPosition {
 		RCPosition other = (RCPosition) obj;
 		return column == other.column && row == other.row;
 	}
-	
-	
-	
+
 }

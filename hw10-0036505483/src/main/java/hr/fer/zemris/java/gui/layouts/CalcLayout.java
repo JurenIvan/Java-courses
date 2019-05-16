@@ -9,16 +9,38 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that holds implementation of {@link LayoutManager2} which models layout
+ * of calculator
+ * 
+ * @author juren
+ *
+ */
 public class CalcLayout implements LayoutManager2 {
 
+	/**
+	 * Map that stores components of layout
+	 */
 	private Map<Component, RCPosition> componentConstraints = new HashMap<>();
 
+	/**
+	 * constant for number of rows
+	 */
 	private final int ROW_COUNT = 5;
+	/**
+	 * constant for number of columns
+	 */
 	private final int COLLUMN_COUNT = 7;
+	/**
+	 * default spacer,given by constructor
+	 */
 	private final int spacer;
 
 	/**
-	 * @param space
+	 * Standard constructor, defines spacer
+	 * 
+	 * @param spacer default space in pixels between components
+	 * @throws CalcLayoutException if spacer is negative
 	 */
 	public CalcLayout(int spacer) {
 		if (spacer < 0)
@@ -27,6 +49,9 @@ public class CalcLayout implements LayoutManager2 {
 		componentConstraints = new HashMap<>();
 	}
 
+	/**
+	 * Default constructor, sets spacer to zero.
+	 */
 	public CalcLayout() {
 		this(0);
 	}
@@ -56,6 +81,15 @@ public class CalcLayout implements LayoutManager2 {
 		return getStandardDimension(parent, "max");
 	}
 
+	/**
+	 * Method that returns layout size for given key. if key is "min" then
+	 * minimumLayoutSize is returned if key is "max" then maximumLayoutSize is
+	 * returned. created to reduce code redundancy.
+	 * 
+	 * @param parent container
+	 * @param key    that determines which layout is wanted
+	 * @return dimensions of wanted layout
+	 */
 	private Dimension getStandardDimension(Container parent, String key) {
 		Dimension dim = getCertainDimension(parent, key);
 		if (dim == null)
@@ -66,6 +100,15 @@ public class CalcLayout implements LayoutManager2 {
 		return new Dimension(newWidth, newHeight);
 	}
 
+	/**
+	 * Method that returns layout size for given key. if key is "min" then
+	 * minimumLayoutSize is returned if key is "max" then maximumLayoutSize is
+	 * returned. created to reduce code redundancy.
+	 * 
+	 * @param parent parent container
+	 * @param key    that determines which layout will be used
+	 * @return dimensions of layout
+	 */
 	private Dimension getCertainDimension(Container parent, String key) {
 		Point pair = null;
 		if (key.equals("min") || key.equals("pref")) {
@@ -81,6 +124,13 @@ public class CalcLayout implements LayoutManager2 {
 		return new Dimension(pair.x, pair.y);
 	}
 
+	/**
+	 * Method used to get maximumlayout dimensions of container upon the method is
+	 * called
+	 * 
+	 * @param parent container upon a method does it's job
+	 * @return 2 variables packed into Point structure
+	 */
 	private Point getMaxDimension(Container parent) {
 		int w, h;
 		w = h = Integer.MAX_VALUE;
@@ -104,6 +154,13 @@ public class CalcLayout implements LayoutManager2 {
 		return new Point(w, h);
 	}
 
+	/**
+	 * Method used to get minimum or prefered layout dimensions of container upon
+	 * the method is called
+	 * 
+	 * @param parent container upon a method does it's job
+	 * @return 2 variables packed into Point structure
+	 */
 	private Point getMinOrPrefDimension(Container parent, String key) {
 		int w, h;
 		w = h = Integer.MIN_VALUE;
@@ -139,7 +196,7 @@ public class CalcLayout implements LayoutManager2 {
 
 		for (var c : componentConstraints.keySet()) {
 			RCPosition rcPos = componentConstraints.get(c);
-			
+
 			int x = (int) Math.round(widthOfComponent * (rcPos.getColumn() - 1.0) + spacer * (rcPos.getColumn() - 1.0));
 			int y = (int) Math.round(heightOfComponent * (rcPos.getRow() - 1.0) + ((rcPos.getRow() - 1.0) * spacer));
 
@@ -183,6 +240,12 @@ public class CalcLayout implements LayoutManager2 {
 	public void invalidateLayout(Container target) {
 	}
 
+	/**
+	 * Method used to check validity of position of component.
+	 * 
+	 * @param pos Structure holding position of component
+	 * @return boolean whose state is determined by validity of position
+	 */
 	private boolean checkBorders(RCPosition pos) {
 		if (pos.getRow() < 1 || pos.getRow() > ROW_COUNT || pos.getColumn() < 1 || pos.getColumn() > COLLUMN_COUNT) {
 			return false;
