@@ -24,11 +24,15 @@ public class BarChartComponent extends JComponent {
 	/**
 	 * Variable/constant that stores color for background
 	 */
-	private static final Color BACKGROUND_COLOR = Color.gray;
+	private static final Color BACKGROUND_COLOR = Color.pink;
 	/**
 	 * Variable/constant that stores color for y axis
 	 */
-	private static final Color Y_AXIS_COLOR = Color.magenta;
+	private static final Color Y_AXIS_COLOR = Color.blue;
+	/**
+	 * Variable/constant that stores color for numbers on y axis
+	 */
+	private static final Color Y_AXIS_COLOR_NUMBERS = Color.DARK_GRAY;
 	/**
 	 * Variable/constant that stores color for x axis
 	 */
@@ -36,11 +40,8 @@ public class BarChartComponent extends JComponent {
 	/**
 	 * Variable/constant that stores color for numbers on x axis
 	 */
-	private static final Color X_AXIS_COLOR_NUMBERS = Color.BLACK;
-	/**
-	 * Variable/constant that stores color for numbers on y axis
-	 */
-	private static final Color Y_AXIS_COLOR_NUMBERS = Color.DARK_GRAY;
+	private static final Color X_AXIS_COLOR_NUMBERS = Color.white;
+	
 	/**
 	 * Variable/constant that stores color for lines of x axis
 	 */
@@ -52,8 +53,11 @@ public class BarChartComponent extends JComponent {
 	/**
 	 * Variable/constant that stores color for filament of rectangle
 	 */
-	private static final Color RECTANGLE_COLOR = Color.RED;
+	private static final Color RECTANGLE_COLOR = Color.green;
 
+	//don't judge me cause of my color palate choice :) 
+	//just kidding, just wanted to demonstrate the possibilities
+	
 	/**
 	 * variable/constant that stores the size of triangles
 	 */
@@ -108,7 +112,7 @@ public class BarChartComponent extends JComponent {
 	 */
 	private void drawCollumns(Graphics g, Insets borders, Color color) {
 		List<XYValue> list = barChart.getList();
-
+		g.setColor(color);
 		for (int i = 0; i < list.size(); i++) {
 			g.fill3DRect(borders.left + diffW * i,
 					getHeight() - borders.bottom

@@ -90,6 +90,9 @@ public class BarChartDemo extends JFrame {
 		} catch (NumberFormatException e) {
 			System.out.println("Illegal number format");
 			return;
+		}catch (IllegalArgumentException e) {
+			System.out.println("Illegal arguments in data to plot");
+			return;
 		}
 
 		SwingUtilities.invokeLater(() -> {

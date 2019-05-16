@@ -218,10 +218,10 @@ public class CalcLayout implements LayoutManager2 {
 		}
 
 		if (!(constraints instanceof RCPosition))
-			throw new UnsupportedOperationException("Only RCPosition type allowed as border");
+			throw new CalcLayoutException("Only RCPosition type allowed as border");
 
 		if (!checkBorders((RCPosition) constraints))
-			throw new UnsupportedOperationException("Invalid position");
+			throw new CalcLayoutException("Invalid position");
 
 		componentConstraints.put(comp, (RCPosition) constraints);
 	}
@@ -254,7 +254,7 @@ public class CalcLayout implements LayoutManager2 {
 			if (pos.equals(e))
 				return false;
 		}
-		if (pos.getRow() == 1 && pos.getColumn() > 1 && pos.getColumn() < 5)
+		if (pos.getRow() == 1 && pos.getColumn() > 1 && pos.getColumn() < 6)
 			return false;
 		return true;
 	}

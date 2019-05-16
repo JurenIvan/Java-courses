@@ -50,7 +50,6 @@ public class BarChart {
 	 *                                  is smaller than minY or maxY is smaller than
 	 *                                  minY
 	 */
-
 	public BarChart(List<XYValue> list, String xDescription, String yDescription, int minY, int maxY, int stepY) {
 
 		for (var elem : list) {

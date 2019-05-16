@@ -6,6 +6,7 @@ package hr.fer.zemris.java.gui.calc.model;
  * @author juren
  *
  */
+@FunctionalInterface
 public interface NameListener {
 
 	/**
