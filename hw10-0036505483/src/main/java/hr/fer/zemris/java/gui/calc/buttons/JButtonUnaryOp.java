@@ -2,6 +2,8 @@ package hr.fer.zemris.java.gui.calc.buttons;
 
 import java.util.function.Function;
 
+import javax.swing.JOptionPane;
+
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 import hr.fer.zemris.java.gui.calc.model.JCheckBoxImpl;
@@ -61,15 +63,18 @@ public class JButtonUnaryOp extends MyJButton implements NameListener {
 		this.inv = inv;
 		this.func = func;
 		this.funcInversed = funcInversed;
-		try {
-			addActionListener((e) -> {
+
+		addActionListener((e) -> {
+			try {
 				double result = calculate(model.getValue());
 				model.clear();
 				model.setValue(result);
-			});
-		} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e) {
+			} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e1) {
+				JOptionPane.showMessageDialog(null,"Error occured! Ignoring command! " + e1.getMessage());
+			}
+			;
+		});
 
-		}
 		inv.addListener(this);
 
 	}

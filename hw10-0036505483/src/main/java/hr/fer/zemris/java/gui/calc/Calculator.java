@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.util.Stack;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -73,6 +74,7 @@ public class Calculator extends JFrame {
 	 * @param stack used to enable push and pop to calculator
 	 */
 	private void configureSpecialButtons(Container cp, CalcModel model, Stack<Double> stack) {
+		try {
 		cp.add(new JButtonSpecial((t) -> {
 			double result = t.getPendingBinaryOperation().applyAsDouble(t.getActiveOperand(), t.getValue());
 			t.setValue(result);
@@ -85,7 +87,9 @@ public class Calculator extends JFrame {
 		cp.add(new JButtonSpecial((t) -> model.insertDecimalPoint(), ".", model), "5,5");
 		cp.add(new JButtonSpecial((t) -> stack.add(model.getValue()), "push", model), "3,7");
 		cp.add(new JButtonSpecial((t) -> model.setValue(stack.pop()), "pop", model), "4,7");
-
+		}catch (Exception e) {
+			JOptionPane.showMessageDialog(null,"error occured! " + e.getMessage());
+		}
 	}
 
 	/**

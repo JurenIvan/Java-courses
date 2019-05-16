@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.gui.calc.buttons;
 
+import javax.swing.JOptionPane;
+
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 
@@ -29,11 +31,14 @@ public class JButtonNumber extends MyJButton {
 
 		super(digit + "", model);
 		setFont(getFont().deriveFont(30f));
-		try {
-			addActionListener((e) -> model.insertDigit(digit));
-		} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e) {
-
-		}
+		
+			addActionListener((e) ->{
+				try { 
+					model.insertDigit(digit);
+				} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e1) {
+					JOptionPane.showMessageDialog(null,"Error occured! Ignoring command! " + e1.getMessage());
+			}});
+		
 	}
 
 	/**

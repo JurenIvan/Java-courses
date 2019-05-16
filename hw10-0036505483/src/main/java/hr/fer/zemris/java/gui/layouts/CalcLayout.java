@@ -125,7 +125,7 @@ public class CalcLayout implements LayoutManager2 {
 	}
 
 	/**
-	 * Method used to get maximumlayout dimensions of container upon the method is
+	 * Method used to get maximum layout dimensions of container upon the method is
 	 * called
 	 * 
 	 * @param parent container upon a method does it's job

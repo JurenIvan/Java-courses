@@ -2,6 +2,8 @@ package hr.fer.zemris.java.gui.calc.buttons;
 
 import java.util.function.DoubleBinaryOperator;
 
+import javax.swing.JOptionPane;
+
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 import hr.fer.zemris.java.gui.calc.model.JCheckBoxImpl;
@@ -60,8 +62,9 @@ public class JButtonBinarOp extends MyJButton implements NameListener {
 		this.inv = inv;
 		this.bifunc = bifunc;
 		this.bifuncInversed = bifuncInversed;
-		try {
-			addActionListener((e) -> {
+
+		addActionListener((e) -> {
+			try {
 				if (model.isActiveOperandSet()) {
 					double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(),
 							model.getValue());
@@ -71,10 +74,11 @@ public class JButtonBinarOp extends MyJButton implements NameListener {
 				model.setActiveOperand(model.getValue());
 				model.setPendingBinaryOperation(chooseOperation());
 				model.clear();
-			});
-		} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e) {
+			} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e1) {
+				JOptionPane.showMessageDialog(null,"Error occured! Ignoring command!" + e1.getMessage());
+			}
+		});
 
-		}
 		inv.addListener(this);
 
 	}

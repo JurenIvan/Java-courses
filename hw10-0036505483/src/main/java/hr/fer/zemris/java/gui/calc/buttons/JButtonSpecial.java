@@ -1,6 +1,9 @@
 package hr.fer.zemris.java.gui.calc.buttons;
 
+import java.util.EmptyStackException;
 import java.util.function.Consumer;
+
+import javax.swing.JOptionPane;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
@@ -29,7 +32,11 @@ public class JButtonSpecial extends MyJButton {
 
 		try {
 			addActionListener((e) -> {
+				try {
 				consumer.accept(model);
+				}catch (CalculatorInputException | IllegalStateException | IllegalArgumentException | EmptyStackException e1 ) {
+					JOptionPane.showMessageDialog(null,"Error occured! Ignoring command! " + e1.getMessage());
+				}
 			});
 		} catch (CalculatorInputException | IllegalStateException | IllegalArgumentException e) {
 

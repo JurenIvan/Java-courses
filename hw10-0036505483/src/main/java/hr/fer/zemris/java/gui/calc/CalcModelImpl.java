@@ -113,7 +113,7 @@ public class CalcModelImpl implements CalcModel {
 	@Override
 	public void swapSign() throws CalculatorInputException {
 		if (!editable) {
-			throw new CalculatorInputException();
+			throw new CalculatorInputException("Illegal input. You may restart.");
 		}
 		this.isNegative = !isNegative;
 		notifyObservers();
@@ -122,11 +122,11 @@ public class CalcModelImpl implements CalcModel {
 	@Override
 	public void insertDecimalPoint() throws CalculatorInputException {
 		if (!editable)
-			throw new CalculatorInputException();
+			throw new CalculatorInputException("Illegal input. You may restart.");
 		if (currValueString.contains("."))
-			throw new CalculatorInputException();
+			throw new CalculatorInputException("Illegal input. You may restart.");
 		if (currValueString.length() == 0)
-			throw new CalculatorInputException();
+			throw new CalculatorInputException("Illegal input. You may restart.");
 
 		currValueString = currValueString + '.';
 	}
@@ -136,7 +136,7 @@ public class CalcModelImpl implements CalcModel {
 		if (digit < 0 || digit > 9)
 			throw new IllegalArgumentException("Not a digit");
 		if (!editable)
-			throw new CalculatorInputException("Calculator is not editable at the moment!");
+			throw new CalculatorInputException("Calculator is not editable at the moment! You may restart ");
 		try {
 			currValue = Double.parseDouble(currValueString + digit);
 		} catch (NumberFormatException e) {
@@ -166,14 +166,14 @@ public class CalcModelImpl implements CalcModel {
 	@Override
 	public double getActiveOperand() throws IllegalStateException {
 		if (!activeOperatorSet)
-			throw new IllegalStateException();
+			throw new IllegalStateException("No active operand for now.");
 		return activeOperand;
 	}
 
 	@Override
 	public void setActiveOperand(double activeOperand) {
 		if (activeOperatorSet) {
-			throw new CalculatorInputException();
+			throw new CalculatorInputException("Operand is already set.");
 		}
 		this.activeOperand = activeOperand;
 		activeOperatorSet = true;

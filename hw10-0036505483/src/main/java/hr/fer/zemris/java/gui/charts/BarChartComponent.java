@@ -182,7 +182,7 @@ public class BarChartComponent extends JComponent {
 			g.drawString(broj + "", x - calculateYOffset(g, broj), h + fm.getAscent() / 2);
 			h = h - diffH;
 		}
-		return fm.getAscent() + 2;
+		return yOffset+1;
 	}
 
 	/**
