@@ -17,28 +17,41 @@ import hr.fer.zemris.java.gui.calc.model.JLabelImpl;
 import hr.fer.zemris.java.gui.calc.model.JCheckBoxImpl;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 
+/**
+ * Class that has main method and holds implementation of basic windows 95 like
+ * calculator.
+ * 
+ * @author juren
+ *
+ */
 public class Calculator extends JFrame {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Standard constructor that calls methods used to set up GUI
+	 */
 	public Calculator() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		initGUI();
 		pack();
 	}
 
+	/**
+	 * Method used to clear up the constructor.Contains commands to configure GUI.
+	 */
 	private void initGUI() {
 		Stack<Double> stack = new Stack<Double>();
 		CalcModel model = new CalcModelImpl();
 		JLabelImpl display = new JLabelImpl();
 		JCheckBoxImpl jrb = new JCheckBoxImpl();
-		
+
 		model.addCalcValueListener(display);
 		Container cp = getContentPane();
 		cp.setLayout(new CalcLayout(5));
 		cp.add(jrb, "5,7");
-		cp.add(display, "1,1");	
+		cp.add(display, "1,1");
 		jrb.setText("Inv");
-		
+
 		// display setup
 		displaySetup(display);
 		// digits
@@ -48,9 +61,17 @@ public class Calculator extends JFrame {
 		// binary
 		configureBinaryOperators(cp, model, jrb);
 		// special
-		configureSpecialButtons(cp,model,stack);
+		configureSpecialButtons(cp, model, stack);
 	}
 
+	/**
+	 * Method used to clear up method initGUI. Its function is to configure buttons
+	 * such as = push pop clr reset etc.
+	 * 
+	 * @param cp    Container of calculator
+	 * @param model Implementation of Calculator model interface
+	 * @param stack used to enable push and pop to calculator
+	 */
 	private void configureSpecialButtons(Container cp, CalcModel model, Stack<Double> stack) {
 		cp.add(new JButtonSpecial((t) -> {
 			double result = t.getPendingBinaryOperation().applyAsDouble(t.getActiveOperand(), t.getValue());
@@ -64,9 +85,14 @@ public class Calculator extends JFrame {
 		cp.add(new JButtonSpecial((t) -> model.insertDecimalPoint(), ".", model), "5,5");
 		cp.add(new JButtonSpecial((t) -> stack.add(model.getValue()), "push", model), "3,7");
 		cp.add(new JButtonSpecial((t) -> model.setValue(stack.pop()), "pop", model), "4,7");
-		
+
 	}
 
+	/**
+	 * Method used to set up display of calculator
+	 * 
+	 * @param display JLabel upon actions are performed
+	 */
 	private void displaySetup(JLabelImpl display) {
 		display.setEnabled(false);
 		display.setText("0");
@@ -74,15 +100,33 @@ public class Calculator extends JFrame {
 		display.setOpaque(true);
 	}
 
+	/**
+	 * Method used to clear up method initGUI. Its function is to configure buttons
+	 * such as * / - +
+	 * 
+	 * @param cp    Container of calculator
+	 * @param model Implementation of Calculator model interface
+	 * @param jrb   its a checkbox what determines whether normal or inverse
+	 *              function is needed
+	 */
 	private void configureBinaryOperators(Container cp, CalcModel model, JCheckBoxImpl jrb) {
 		cp.add(new JButtonBinarOp((a, b) -> a / b, "/", jrb, model), "2,6");
 		cp.add(new JButtonBinarOp((a, b) -> a * b, "*", jrb, model), "3,6");
 		cp.add(new JButtonBinarOp((a, b) -> a - b, "-", jrb, model), "4,6");
 		cp.add(new JButtonBinarOp((a, b) -> a + b, "+", jrb, model), "5,6");
-		cp.add(new JButtonBinarOp((a, b) -> Math.pow(a, 1 / b),(a, b) -> Math.pow(a, b), "x^n", "x^(1/n)", jrb, model),
+		cp.add(new JButtonBinarOp((a, b) -> Math.pow(a, 1 / b), (a, b) -> Math.pow(a, b), "x^n", "x^(1/n)", jrb, model),
 				"5,1");
 	}
 
+	/**
+	 * Method used to clear up method initGUI. Its function is to configure buttons
+	 * such as sin cos pow etc
+	 * 
+	 * @param cp    Container of calculator
+	 * @param model Implementation of Calculator model interface
+	 * @param jrb   its a checkbox what determines whether normal or inverse
+	 *              function is needed
+	 */
 	private void configureUnaryOperators(Container cp, CalcModel model, JCheckBoxImpl jrb) {
 		cp.add(new JButtonUnaryOp((a) -> 1 / a, "1/x", jrb, model), "2,1");
 		cp.add(new JButtonUnaryOp((a) -> Math.sin(a), (a) -> Math.asin(a), "sin", "arcsin", jrb, model), "2,2");
@@ -90,9 +134,17 @@ public class Calculator extends JFrame {
 		cp.add(new JButtonUnaryOp((a) -> Math.cos(a), (a) -> Math.acos(a), "cos", "arccos", jrb, model), "3,2");
 		cp.add(new JButtonUnaryOp((a) -> Math.log(a), (a) -> Math.pow(Math.E, a), "ln", "e^x", jrb, model), "4,1");
 		cp.add(new JButtonUnaryOp((a) -> Math.tan(a), (a) -> Math.atan(a), "tan", "atan", jrb, model), "4,2");
-		cp.add(new JButtonUnaryOp((a) -> 1 / Math.tan(a), (a) -> Math.PI / 2 - Math.atan(a), "ctg", "arcctg", jrb, model), "5,2");
+		cp.add(new JButtonUnaryOp((a) -> 1 / Math.tan(a), (a) -> Math.PI / 2 - Math.atan(a), "ctg", "arcctg", jrb,
+				model), "5,2");
 	}
 
+	/**
+	 * Method used to clear up method initGUI. Its function is to configure buttons
+	 * that represent digits
+	 * 
+	 * @param cp    Container of calculator
+	 * @param model Implementation of Calculator model interface
+	 */
 	private void configureDigitsButtons(Container cp, CalcModel model) {
 		cp.add(new JButtonNumber(0, model), "5,3");
 		cp.add(new JButtonNumber(1, model), "4,3");
@@ -106,6 +158,10 @@ public class Calculator extends JFrame {
 		cp.add(new JButtonNumber(9, model), "2,5");
 	}
 
+	/**
+	 * Main method used to start the program-calculator
+	 * @param args not used.
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
 			new Calculator().setVisible(true);

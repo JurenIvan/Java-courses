@@ -7,15 +7,48 @@ import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 import hr.fer.zemris.java.gui.calc.model.JCheckBoxImpl;
 import hr.fer.zemris.java.gui.calc.model.NameListener;
 
+/**
+ * Class that represents button that has two {@link DoubleBinaryOperator}
+ * 
+ * @author juren
+ *
+ */
 public class JButtonBinarOp extends MyJButton implements NameListener {
 
 	private static final long serialVersionUID = 1L;
-
+	/**
+	 * private variable used for storing names of buttons
+	 */
 	private String[] name;
+	/**
+	 * private variable used for storing first function for which button is
+	 * responsible
+	 */
 	private DoubleBinaryOperator bifunc;
+	/**
+	 * private variable used for storing inverse function for which button is
+	 * responsible
+	 */
 	private DoubleBinaryOperator bifuncInversed;
+	/**
+	 * private variable used for storing reference to {@link JCheckBoxImpl} so that
+	 * we can change to inverse function if needed
+	 */
 	private JCheckBoxImpl inv;
 
+	/**
+	 * Constructor for class that takes functions, name, reference to
+	 * {@link JCheckBoxImpl} and {@link CalcModel} so that button can call all
+	 * apropriate methods and insure that operation will be done.
+	 * 
+	 * @param bifunc         regular function that is called when button is pressed
+	 * @param bifuncInversed inverse function that is called when button is pressed
+	 * @param nameNormal     name displayed on button
+	 * @param nameInversed   inversed name displayed on button
+	 * @param inv            reference to {@link JCheckBoxImpl} used to check for
+	 *                       change to inverse function
+	 * @param model          model of calculator
+	 */
 	public JButtonBinarOp(DoubleBinaryOperator bifunc, DoubleBinaryOperator bifuncInversed, String nameNormal,
 			String nameInversed, JCheckBoxImpl inv, CalcModel model) {
 		super(nameNormal, model);
@@ -46,21 +79,35 @@ public class JButtonBinarOp extends MyJButton implements NameListener {
 
 	}
 
+	/**
+	 * Constructor that duplicates given values and delegates to another constructor
+	 * 
+	 * @param bifunc     regular function that is called when button is pressed
+	 * @param nameNormal name displayed on button
+	 * @param inv        reference to {@link JCheckBoxImpl} used to check for change
+	 *                   to inverse function
+	 * @param model      model of calculator
+	 */
 	public JButtonBinarOp(DoubleBinaryOperator bifunc, String nameNormal, JCheckBoxImpl inv, CalcModel model) {
 		this(bifunc, bifunc, nameNormal, nameNormal, inv, model);
 	}
 
-	public DoubleBinaryOperator chooseOperation() {
+	/**
+	 * method that is basically used as ternary operator. returns normal or inverse
+	 * function
+	 * 
+	 * @return
+	 */
+	private DoubleBinaryOperator chooseOperation() {
 		if (inv.isSelected())
 			return bifunc;
 		return bifuncInversed;
 	}
 
-	public String getName(int i) {
-		return name[i];
-	}
-
-	public void changeText() {
+	/**
+	 * method used to switch to another name
+	 */
+	private void changeText() {
 		if (inv.isSelected()) {
 			setText(name[1]);
 		} else {

@@ -15,12 +15,28 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+/**
+ * Class containing main method used to demonstrate functionalities of class. It
+ * is program that read file, parses it and creates graph out of it.
+ * 
+ * @author juren
+ *
+ */
 public class BarChartDemo extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * reference to barChart
+	 */
 	private static BarChart barChart;
+	/**
+	 * Provided path to file
+	 */
 	private static Path pathToFile;
 
+	/**
+	 * Constructor for {@link BarChartDemo}. Sets some gui configurations.
+	 */
 	public BarChartDemo() {
 		setLocation(20, 50);
 		setVisible(true);
@@ -28,13 +44,22 @@ public class BarChartDemo extends JFrame {
 		pack();
 	}
 
+	/**
+	 * Method used to clear up the constructor.Contains commands to configure GUI.
+	 */
 	private void initGUI() {
 		JComponent jcomponent = new BarChartComponent(barChart);
 		setLayout(new BorderLayout());
-		add(new JLabel(pathToFile.toAbsolutePath().toString(),SwingConstants.CENTER),BorderLayout.NORTH);
-		add(jcomponent,BorderLayout.CENTER);
+		add(new JLabel(pathToFile.toAbsolutePath().toString(), SwingConstants.CENTER), BorderLayout.NORTH);
+		add(jcomponent, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Main method used to start program and demonstrate it's functionalities of
+	 * graphing data
+	 * 
+	 * @param args expecting one string representing path to file
+	 */
 	public static void main(String[] args) {
 
 		if (args.length != 1) {
@@ -57,8 +82,8 @@ public class BarChartDemo extends JFrame {
 				String splitted2[] = s.split(",");
 				list.add(new XYValue(Integer.parseInt(splitted2[0]), Integer.parseInt(splitted2[1])));
 			}
-			barChart = new BarChart(list, lines[0], lines[1], Integer.parseInt(lines[3]),
-					Integer.parseInt(lines[4]), Integer.parseInt(lines[5]));
+			barChart = new BarChart(list, lines[0], lines[1], Integer.parseInt(lines[3]), Integer.parseInt(lines[4]),
+					Integer.parseInt(lines[5]));
 		} catch (IOException e) {
 			System.out.println("Invalid input path");
 			return;

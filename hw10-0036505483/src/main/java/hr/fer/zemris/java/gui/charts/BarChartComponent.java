@@ -11,26 +11,71 @@ import java.util.Objects;
 
 import javax.swing.JComponent;
 
+/**
+ * Class representing implementation of {@link JComponent} that is able to draw
+ * presented data.
+ * 
+ * @author juren
+ *
+ */
 public class BarChartComponent extends JComponent {
 
 	private static final long serialVersionUID = 1L;
-
+	/**
+	 * Variable/constant that stores color for background
+	 */
 	private static final Color BACKGROUND_COLOR = Color.gray;
+	/**
+	 * Variable/constant that stores color for y axis
+	 */
 	private static final Color Y_AXIS_COLOR = Color.magenta;
+	/**
+	 * Variable/constant that stores color for x axis
+	 */
 	private static final Color X_AXIS_COLOR = Color.magenta;
+	/**
+	 * Variable/constant that stores color for numbers on x axis
+	 */
 	private static final Color X_AXIS_COLOR_NUMBERS = Color.BLACK;
+	/**
+	 * Variable/constant that stores color for numbers on y axis
+	 */
 	private static final Color Y_AXIS_COLOR_NUMBERS = Color.DARK_GRAY;
+	/**
+	 * Variable/constant that stores color for lines of x axis
+	 */
 	private static final Color X_AXIS_COLOR_LINES = Color.yellow;
+	/**
+	 * Variable/constant that stores color for lines of y axis
+	 */
 	private static final Color Y_AXIS_COLOR_LINES = Color.yellow;
+	/**
+	 * Variable/constant that stores color for filament of rectangle
+	 */
 	private static final Color RECTANGLE_COLOR = Color.RED;
-	private final int TRIANGLE_SIZE = 10;
-	private BarChart barChart;
-	
-	
-	private int diffW;
-	private int diffH;
-	
 
+	/**
+	 * variable/constant that stores the size of triangles
+	 */
+	private final int TRIANGLE_SIZE = 10;
+	/**
+	 * variable that stores reference to barChart whose data is represented
+	 */
+	private BarChart barChart;
+	/**
+	 * variable that stores width of column of graph
+	 */
+	private int diffW;
+	/**
+	 * variable that stores height of column of graph
+	 */
+	private int diffH;
+
+	/**
+	 * Standard constructor
+	 * 
+	 * @param barChart
+	 */
 	public BarChartComponent(BarChart barChart) {
 		Objects.requireNonNull(barChart, "Cannot plot null graph");
 		this.barChart = barChart;
@@ -49,14 +94,20 @@ public class BarChartComponent extends JComponent {
 		borders.bottom = borders.bottom + drawXAxisText(g, borders, X_AXIS_COLOR);
 		borders.bottom = borders.bottom + drawXAxisSigns(g, borders, X_AXIS_COLOR_NUMBERS, X_AXIS_COLOR_LINES);
 		borders.left = borders.left + drawYAxisSigns(g, borders, Y_AXIS_COLOR_NUMBERS, Y_AXIS_COLOR_LINES);
-		
+
 		putTriangles(g, borders);
-		drawChartColumns(g, borders, RECTANGLE_COLOR);
+		drawCollumns(g, borders, RECTANGLE_COLOR);
 	}
 
-
-	private void drawChartColumns(Graphics g, Insets borders, Color color) {
-		List<XYValue> list = barChart.getList();	
+	/**
+	 * Method used to draw rectangles on graph
+	 * 
+	 * @param g       {@link Graphics} upon it is drawn
+	 * @param borders margins of remaining space
+	 * @param color   color of columns
+	 */
+	private void drawCollumns(Graphics g, Insets borders, Color color) {
+		List<XYValue> list = barChart.getList();
 
 		for (int i = 0; i < list.size(); i++) {
 			g.fill3DRect(borders.left + diffW * i,
@@ -67,6 +118,12 @@ public class BarChartComponent extends JComponent {
 
 	}
 
+	/**
+	 * Method used to draw triangles on appropriate place
+	 * 
+	 * @param g       {@link Graphics} upon it is drawn
+	 * @param borders margins of remaining space
+	 */
 	private void putTriangles(Graphics g, Insets borders) {
 		int x[] = new int[3];
 		int y[] = new int[3];
@@ -80,15 +137,25 @@ public class BarChartComponent extends JComponent {
 		y[2] = getHeight() - borders.bottom;
 		g.fillPolygon(x, y, 3);
 
-		x[0] = borders.left - TRIANGLE_SIZE / 2 ;
-		x[1] = borders.left + TRIANGLE_SIZE / 2 ;
-		x[2] = borders.left ;
+		x[0] = borders.left - TRIANGLE_SIZE / 2;
+		x[1] = borders.left + TRIANGLE_SIZE / 2;
+		x[2] = borders.left;
 
 		y[0] = y[1] = borders.top;
 		y[2] = y[0] - TRIANGLE_SIZE;
 		g.fillPolygon(x, y, 3);
 	}
 
+	/**
+	 * Method used to draw vertical lines and appropriate numbers. Numbers are
+	 * placed in center between 2 lines
+	 * 
+	 * @param g            {@link Graphics} upon it is drawn
+	 * @param borders      margins of remaining space
+	 * @param colorNumbers color of numbers
+	 * @param colorLines   color of lines
+	 * @return space consumed by numbers at the bottom
+	 */
 	private int drawYAxisSigns(Graphics g, Insets borders, Color colorNumbers, Color colorLines) {
 		FontMetrics fm = g.getFontMetrics();
 
@@ -114,6 +181,16 @@ public class BarChartComponent extends JComponent {
 		return fm.getAscent() + 2;
 	}
 
+	/**
+	 * Method used to draw horizontal lines and appropriate numbers. Numbers are
+	 * aligned to the right.
+	 * 
+	 * @param g            {@link Graphics} upon it is drawn
+	 * @param borders      margins of remaining space
+	 * @param colorNumbers color of numbers
+	 * @param colorLines   color of lines
+	 * @return place consumed by numbers on the left side
+	 */
 	private int drawXAxisSigns(Graphics g, Insets borders, Color colorNumbers, Color colorLines) {
 
 		FontMetrics fm = g.getFontMetrics();
@@ -140,16 +217,38 @@ public class BarChartComponent extends JComponent {
 		return yOffset;
 	}
 
+	/**
+	 * Method that calculates offset caused by number that is passed as an argument
+	 * 
+	 * @param g       {@link Graphics} that has data about size of strings
+	 * @param biggest argument that is measured
+	 * @return size of string representation of argument
+	 */
 	private int calculateYOffset(Graphics g, int biggest) {
 		return g.getFontMetrics().stringWidth(biggest + "");
 	}
 
+	/**
+	 * Method used to color the background
+	 * 
+	 * @param g       {@link Graphics} upon it is drawn
+	 * @param borders margins of remaining space
+	 * @param color   color of numbers
+	 */
 	private void colorBackground(Graphics g, Insets borders, Color color) {
 		g.setColor(color);
 		g.fillRect(borders.left, borders.right, getSize().width - borders.left - borders.right,
 				getSize().height - borders.bottom - borders.top);
 	}
 
+	/**
+	 * Method used to draw vertical description of text alongside y axis
+	 * 
+	 * @param g       {@link Graphics} upon it is drawn
+	 * @param borders margins of remaining space
+	 * @param color   color of text
+	 * @return place consumed by numbers alongside left margin
+	 */
 	private int drawYAxisText(Graphics g, Insets borders, Color color) {
 		g.setColor(color);
 
@@ -170,6 +269,14 @@ public class BarChartComponent extends JComponent {
 		return height;
 	}
 
+	/**
+	 * Method used to draw horizontal description of text alongside x axis
+	 * 
+	 * @param g       {@link Graphics} upon it is drawn
+	 * @param borders margins of remaining space
+	 * @param color   color of text
+	 * @return place consumed by numbers alongside south margin
+	 */
 	private int drawXAxisText(Graphics g, Insets ins, Color color) {
 		g.setColor(color);
 

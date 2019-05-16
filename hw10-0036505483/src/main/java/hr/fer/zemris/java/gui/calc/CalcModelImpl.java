@@ -9,17 +9,42 @@ import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 
 public class CalcModelImpl implements CalcModel {
-
+	/**
+	 * private variable used for storing flag whether calculator is currenlty editable or not
+	 */
 	private boolean editable;
+	/**
+	 * private variable used for storing boolean flag representing whether number is negative or not
+	 */
 	private boolean isNegative;
+	/**
+	 * private variable used for storing string representation of value
+	 */
 	private String currValueString;
+	/**
+	 * private variable used for storing numerical represetation of valueF
+	 */
 	private double currValue;
-
+	/**
+	 * private variable used for storing active operand
+	 */
 	private double activeOperand;
+	/**
+	 * private variable used for storing boolean flag representing whether operator is set
+	 */
 	private boolean activeOperatorSet;
+	/**
+	 * private variable used for storing operation that will take place upon numbers
+	 */
 	private DoubleBinaryOperator pendingOperation;
+	/**
+	 * private variable used for storing listeners
+	 */
 	private Set<CalcValueListener> listeners;
 
+	/**
+	 * Standard constructor
+	 */
 	public CalcModelImpl() {
 		currValueString = "";
 		editable = true;
@@ -53,9 +78,9 @@ public class CalcModelImpl implements CalcModel {
 			value = value * (-1);
 			isNegative = true;
 		} else {
-			isNegative = false;	
+			isNegative = false;
 		}
-		
+
 		this.currValue = value;
 		currValueString = String.valueOf(value);
 		editable = false;
@@ -172,7 +197,7 @@ public class CalcModelImpl implements CalcModel {
 	@Override
 	public String toString() {
 		String output = isNegative ? "-" : "";
-		if(Double.compare(currValue, Double.NaN)==0) {
+		if (Double.compare(currValue, Double.NaN) == 0) {
 			return "NaN";
 		}
 		if (currValueString.isBlank())
@@ -180,6 +205,9 @@ public class CalcModelImpl implements CalcModel {
 		return output + currValueString;
 	}
 
+	/**
+	 * Method used to notify registered Observers
+	 */
 	private void notifyObservers() {
 		for (var observer : listeners) {
 			observer.valueChanged(this);
