@@ -3,8 +3,10 @@ package hr.fer.zemris.java.gui.layouts;
 import java.awt.Color;
 import java.awt.Container;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -32,6 +34,7 @@ public class DemoFrame1 extends JFrame {
 	 */
 	private void initGUI() {
 		Container cp = getContentPane();
+		((JPanel)cp).setBorder(BorderFactory.createLineBorder(Color.RED, 20));
 		cp.setLayout(new CalcLayout(3));
 		cp.add(l("tekst 1"), new RCPosition(1, 1));
 		cp.add(l("tekst 2"), new RCPosition(2, 3));
