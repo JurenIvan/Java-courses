@@ -65,28 +65,84 @@ import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableJMenu;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableJOptionPane;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
 
+/**
+ * Main Class of application containing main method used for running JNotepadPP.
+ * 
+ * JNotepadPP is text editor with support for multiple documents and plethora of
+ * possible tools and actions.
+ * 
+ * i18n implemented for Croatian, German and English.
+ * 
+ * @author juren
+ *
+ */
 public class JNotepadPP extends JFrame {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constant that holds string representation of path to icons needed
+	 */
 	private static final String FIXED_PART_OF_PATH = ".\\icons\\";
+	/**
+	 * Constant for displaying size of Icons in tools.
+	 */
 	private static final int DEFAULT_ICON_SIZE = 50;
+	/**
+	 * Constant for number of displaying chars in dialog box while exiting .
+	 */
 	private static final int HOW_MUCH_CHARS_TO_SHOW = 15;
+	/**
+	 * Constant for minimum size of Window .
+	 */
 	private static final int MINIMUM_WINDOW_SIZE = 500;
+	/**
+	 * Constant for default language.
+	 */
 	private static final String DEFAULT_LANGUAGE = "en";
 
+	/**
+	 * Variable containing reference to model of {@link MultipleDocumentModel} over
+	 * which all of the operation are performed
+	 */
 	private MultipleDocumentModel model;
+	/**
+	 * {@link JPanel} that is left part of status bar
+	 */
 	private JPanel infoLeft;
+	/**
+	 * {@link JPanel} that is right of status bar
+	 */
 	private JPanel infoRight;
+	/**
+	 * {@link JLabel} that is part of status bar and contains current date and time
+	 */
 	private JLabel clock;
+	/**
+	 * Formatter used for displaying time
+	 */
 	private SimpleDateFormat formatter;
+	/**
+	 * private variable representing {@link HashMap} of icons used because we dont
+	 * want to he excessive on IO operations. So its better to cache images into
+	 * ram.
+	 */
 	private HashMap<String, ImageIcon> loadedImages;
+	/**
+	 * {@link FormLocalizationProvider} used for implementation of i18n
+	 */
 	private FormLocalizationProvider flp = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
-	private String language=DEFAULT_LANGUAGE;
-	
+	/**
+	 * variable containing current language of application
+	 */
+	private String language = DEFAULT_LANGUAGE;
+
 	{
 		LocalizationProvider.getInstance().setLanguage(DEFAULT_LANGUAGE);
 	}
 
+	/**
+	 * Standard constructor. Used to initialize GUI, actions and Listeners.
+	 */
 	public JNotepadPP() {
 
 		loadedImages = new HashMap<>();
@@ -97,6 +153,14 @@ public class JNotepadPP extends JFrame {
 		setLocationRelativeTo(null);
 	}
 
+	/**
+	 * Method that is responsible for hashing and memoisation icons that are needed
+	 * 
+	 * @param name of icon (nameOfFile.PNG)
+	 * @return {@link ImageIcon} saved like that
+	 * 
+	 * @throws IllegalArgumentException when no such icon is found
+	 */
 	private ImageIcon getIconNamed(String name) {
 		Objects.requireNonNull(name, "icon must have a name");
 
@@ -115,6 +179,10 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 
+	/**
+	 * Method used to clear up and format code. Derived from constructor. Sets up
+	 * main part of gui.
+	 */
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
@@ -139,6 +207,12 @@ public class JNotepadPP extends JFrame {
 
 	// ------------------------------------------------------
 
+	/**
+	 * Method used to create graphical elements of statusBar which is placed at the
+	 * bottom of screen. Adds elements to provided {@link Container}
+	 * 
+	 * @param cp {@link Container} where status bar elements are added
+	 */
 	private void createStatusbar(Container cp) {
 		JPanel statusBar = new JPanel();
 		statusBar.setLayout(new GridLayout(1, 3));
@@ -170,6 +244,14 @@ public class JNotepadPP extends JFrame {
 		infoRight.add(selLable);
 	}
 
+	/**
+	 * Method used to calculate data related to current {@link Caret} position in
+	 * current {@link SingleDocumentModel
+	 * 
+	 * @return Insets instance where instance.top represents totalLenghtOfDocument,
+	 *         instance.left current line of caret, instance.bottom current column
+	 *         and instance.right represents cur distance form begining of document
+	 */
 	private Insets calcThings() {
 		JTextArea jta = model.getCurrentDocument().getTextComponent();
 		int totalLen = jta.getText().length();
@@ -186,6 +268,10 @@ public class JNotepadPP extends JFrame {
 		return new Insets(totalLen, lineOfcaret + 1, col, len);
 	}
 
+	/**
+	 * Method used to refresh data shown in center and left part of Status bar.
+	 * Activated br curret change or document change.
+	 */
 	private void refreshStatusbar() {
 		Insets data = calcThings();
 		((LocalizableJLable) infoLeft.getComponent(0)).setExtraText(String.valueOf(data.top));
@@ -196,6 +282,10 @@ public class JNotepadPP extends JFrame {
 
 	// ------------------------------------------------------
 
+	/**
+	 * Method used to clear up and format code. Derived from constructor. Sets up
+	 * most of the listeners needed for gui to work. Including Timer used for time.
+	 */
 	private void createListeners() {
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -241,6 +331,10 @@ public class JNotepadPP extends JFrame {
 
 	}
 
+	/**
+	 * Method that sets title of window. title is path to
+	 * {@link SingleDocumentModel} or just (unnamed) - JNotepad++
+	 */
 	private void setTitleOfWindow() {
 		Path p = model.getCurrentDocument().getFilePath();
 		if (p != null) {
@@ -250,6 +344,17 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 
+	/**
+	 * Method used to clear up and format code. Derived from constructor. Sets up
+	 * all actions that are supported. Mnemonics and acceletor keys are hardCoded
+	 * and equal for each language. Supported Actions are {@link #openNewDocument},
+	 * {@link #openDocument}, {@link #saveAsDocument}, {@link #saveDocument},
+	 * {@link #deleteSelectedPart}, {@link #exitAplication}, {@link #closeTab},
+	 * {@link #copy}, {@link #cut}, {@link #paste}, {@link #statistics},
+	 * {@link #toLowerCase}, {@link #toUpperCase}, {@link #inverseCase},
+	 * {@link #ascending}, {@link #descening} and {@link #unique}
+	 * 
+	 */
 	private void createActions() {
 		openNewDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control N"));
 		openNewDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_N);
@@ -314,6 +419,18 @@ public class JNotepadPP extends JFrame {
 		unique.setEnabled(false);
 	}
 
+	/**
+	 * Method used to clear up and format code. Derived from
+	 * {@link #createActions()}. Used to grop all methods that needs to be called
+	 * and whose action should be perfomed when {@link Caret} is updated because if
+	 * selection is set, all of actions listed should be enabled
+	 * {@link JNotepadPP#deleteSelectedPart} {@link JNotepadPP#copy},
+	 * {@link JNotepadPP#cut}, {@link JNotepadPP#inverseCase},
+	 * {@link JNotepadPP#toUpperCase}, {@link JNotepadPP#toLowerCase},
+	 * {@link JNotepadPP#ascending}, {@link JNotepadPP#descening} and
+	 * {@link JNotepadPP#unique}
+	 * 
+	 */
 	private void setSelectionDependant() {
 		boolean hasSelection = model.getCurrentDocument().getTextComponent().getCaret().getDot() != model
 				.getCurrentDocument().getTextComponent().getCaret().getMark();
@@ -329,6 +446,14 @@ public class JNotepadPP extends JFrame {
 		unique.setEnabled(hasSelection);
 	}
 
+	/**
+	 * Method used to clear up and format code. Derived from constructor. Used to
+	 * create Menus at the top of the GUI. Creates 5 {@link JMenu}s which are used
+	 * to access tools implemented. Menus are File, Edit, Change Case, Sort and
+	 * language. Language Menu has list of implemented languages and press on any of
+	 * them resets gui of application.
+	 *
+	 */
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
@@ -373,17 +498,17 @@ public class JNotepadPP extends JFrame {
 		JMenuItem jmiDE = new JMenuItem("de");
 
 		jmiDE.addActionListener((e) -> {
-			language="de";
+			language = "de";
 			LocalizationProvider.getInstance().setLanguage(language);
 			this.pack();
 		});
 		jmiEN.addActionListener((e) -> {
-			language="en";
+			language = "en";
 			LocalizationProvider.getInstance().setLanguage(language);
 			this.pack();
 		});
 		jmiHR.addActionListener((e) -> {
-			language="hr";
+			language = "hr";
 			LocalizationProvider.getInstance().setLanguage(language);
 			this.pack();
 		});
@@ -393,9 +518,18 @@ public class JNotepadPP extends JFrame {
 		lang.add(jmiDE);
 	}
 
+	/**
+	 * 
+	 * Method used to clear up and format code. Derived from constructor. Used to
+	 * create Toolbar and after it is created it is put into provided
+	 * {@link Container}
+	 * 
+	 * @param cp {@link Container} where toolbar is placed
+	 */
 	private void createToolbar(Container cp) {
 		JToolBar tb = new JToolBar();
-
+		// I wasn't sure whether we had to add icons here or not, but i had methods so
+		// it wasnt't a hasle.
 		tb.add(makeButtonWithActionAndIcons(openNewDocument, getIconNamed("newFile.png"), null));
 		tb.add(makeButtonWithActionAndIcons(closeTab, getIconNamed("closeFile.png"), null));
 		tb.add(makeButtonWithActionAndIcons(openDocument, getIconNamed("openFile.png"), null));
@@ -409,6 +543,15 @@ public class JNotepadPP extends JFrame {
 		cp.add(tb, BorderLayout.PAGE_START);
 	}
 
+	/**
+	 * Method used to create custom JButton with linked action, icon for enabled
+	 * state, and icon for disabled state.
+	 * 
+	 * @param action       performed when button is clicked
+	 * @param enabledIcon  icon for enabled state
+	 * @param disabledIcon icon for disabled state
+	 * @return configured button
+	 */
 	private JButton makeButtonWithActionAndIcons(Action action, ImageIcon enabledIcon, ImageIcon disabledIcon) {
 		JButton button = new JButton(action);
 		button.setIcon(enabledIcon);
@@ -416,12 +559,24 @@ public class JNotepadPP extends JFrame {
 		return button;
 	}
 
+	/**
+	 * Main method used to start the app.
+	 * 
+	 * @param args not used.
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new JNotepadPP().setVisible(true));
 	}
 
 //	-----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for opening of a Document.
+	 */
 	private final LocalizableAction openDocument = new LocalizableAction("openDocument", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -438,13 +593,20 @@ public class JNotepadPP extends JFrame {
 						JOptionPane.ERROR_MESSAGE, flp);
 				return;
 			}
-			
+
 			model.loadDocument(openedFilePath).setModified(false);
 		}
 	};
 
 //	 -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for deleting a selected part of text.
+	 */
 	private final LocalizableAction deleteSelectedPart = new LocalizableAction("deleteSelectedPart", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -462,6 +624,13 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for opening a brand new document with no changes made.
+	 */
 	private final LocalizableAction openNewDocument = new LocalizableAction("open", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -473,6 +642,13 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for saving current document without asking if path is known.
+	 */
 	private final LocalizableAction saveDocument = new LocalizableAction("saveDocument", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -494,6 +670,13 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for saving current document always asking for new path.
+	 */
 	private final LocalizableAction saveAsDocument = new LocalizableAction("saveAsDocument", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -518,6 +701,14 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for closing a current tab.If {@link SingleDocumentModel} is modified,
+	 * user is asked to save.
+	 */
 	private final LocalizableAction closeTab = new LocalizableAction("closeTab", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -525,7 +716,7 @@ public class JNotepadPP extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			JFrame frame = new JFrame();
 			String[] options = { "save", "saveAsDocument", "no", "cancel" };
-			if(!model.getCurrentDocument().isModified()) {
+			if (!model.getCurrentDocument().isModified()) {
 				model.closeDocument(model.getCurrentDocument());
 				return;
 			}
@@ -551,6 +742,14 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for exiting out of application. If modified {@link SingleDocumentModel}
+	 * exist, user is asked to save them.
+	 */
 	private final LocalizableAction exitAplication = new LocalizableAction("exitAplication", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -561,6 +760,15 @@ public class JNotepadPP extends JFrame {
 			}
 		}
 
+		/**
+		 * method that iterates though all {@link SingleDocumentModel} stored in
+		 * {@link MultipleDocumentModel} and looks if they are modified or not. if they
+		 * aren't, user is asked whether he wants to save or not. If he cancels Exit
+		 * nothing happens(except files getting saved)
+		 * 
+		 * @param e not used
+		 * @return boolean dependent of conditions described above
+		 */
 		private boolean isAllSaved(ActionEvent e) {
 			SingleDocumentModel sdm;
 			for (int i = 0; i < model.getNumberOfDocuments(); i++) {
@@ -598,6 +806,13 @@ public class JNotepadPP extends JFrame {
 			return true;
 		}
 
+		/**
+		 * Method used as a part of saving document.
+		 * 
+		 * @param sdm model that needs to be saved
+		 * @return 0,1,2 representing user response. 0->save document, 1->do not save
+		 *         2->cancel exiting
+		 */
 		private int getWantedOperation(SingleDocumentModel sdm) {
 			return LocalizableJOptionPane.showOptionDialog(null, "docMofifiedInfo", "warning",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
@@ -608,6 +823,13 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for putting selected part of text into clipboard.
+	 */
 	private final LocalizableAction copy = new LocalizableAction("copy", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -619,6 +841,14 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for putting selected part of text into clipboard and deleting it from
+	 * {@link JTextArea}
+	 */
 	private final LocalizableAction cut = new LocalizableAction("cut", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -629,6 +859,13 @@ public class JNotepadPP extends JFrame {
 	};
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for putting selected part of text from clipboard to {@link JTextArea}
+	 */
 	private final LocalizableAction paste = new LocalizableAction("paste", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -640,6 +877,14 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for outputting data for current document for number of characters,number
+	 * of nonWhitespace characters number of whitespace, and number of lines.
+	 */
 	private final LocalizableAction statistics = new LocalizableAction("statistics", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -661,6 +906,14 @@ public class JNotepadPP extends JFrame {
 			JOptionPane.showMessageDialog(null, sb.toString());
 		}
 
+		/**
+		 * Method that goes through whole text and count how much times was test
+		 * positive for that particular character
+		 * 
+		 * @param text subject of text
+		 * @param test {@link Predicate}
+		 * @return number of positive results
+		 */
 		private int count(String text, Predicate<Character> test) {
 			char[] chars = text.toCharArray();
 			int counter = 0;
@@ -675,6 +928,13 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for setting selected part of text to UPPERCASE
+	 */
 	private final LocalizableAction toUpperCase = new LocalizableAction("toUpperCase", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -684,6 +944,13 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for setting selected part of text to LOWERCASE
+	 */
 	private final LocalizableAction toLowerCase = new LocalizableAction("toLowerCase", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -693,6 +960,14 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for setting selected part of text to UPPERCASE if chars were lowercase
+	 * and vice versa
+	 */
 	private final LocalizableAction inverseCase = new LocalizableAction("inverseCase", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -709,6 +984,11 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 
+	/**
+	 * Method that applies provided {@link Function} over current document
+	 * 
+	 * @param func that is applied over current document
+	 */
 	private void applyFunctionOnDoc(Function<Character, Character> func) {
 		Objects.requireNonNull(func, "Cannot apply null to chars");
 		Document doc = model.getCurrentDocument().getTextComponent().getDocument();
@@ -727,6 +1007,13 @@ public class JNotepadPP extends JFrame {
 
 	}
 
+	/**
+	 * Method that applies provided function over provided text
+	 * 
+	 * @param text over which {@link Function} is applied
+	 * @param func that is applied
+	 * @return new String
+	 */
 	private String manipulateText(String text, Function<Character, Character> func) {
 		Objects.requireNonNull(text, "Cannot apply function over nothing");
 		Objects.requireNonNull(func, "Cannot apply null to chars");
@@ -743,19 +1030,33 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for asending sorting of selected lines.
+	 */
 	private final LocalizableAction ascending = new LocalizableAction("ascending", flp) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Collator collator = Collator.getInstance(new Locale(language)); 
+			Collator collator = Collator.getInstance(new Locale(language));
 			DoSortingMagic(collator::compare);
 		}
 	};
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for descending sorting of selected lines.
+	 */
 	private final LocalizableAction descening = new LocalizableAction("descening", flp) {
 		private static final long serialVersionUID = 1L;
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Collator collator = Collator.getInstance(new Locale(language));
@@ -763,6 +1064,11 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 
+	/**
+	 * Method that takes comparator sorts selected lines
+	 * 
+	 * @param comp {@link Comparator} used for sorting
+	 */
 	private void DoSortingMagic(Comparator<String> comp) {
 
 		List<String> lines = model.getCurrentDocument().getTextComponent().getText().lines()
@@ -785,6 +1091,13 @@ public class JNotepadPP extends JFrame {
 		model.getCurrentDocument().getTextComponent().setText(sb.toString());
 	}
 
+	/**
+	 * Method that returns order number of line where {@link Caret} is situated
+	 * 
+	 * @param lines  collection of Lines
+	 * @param bifunc used to determine whether dot or mark is used.
+	 * @return order number of line where {@link Caret} is situated
+	 */
 	private int getNumberOfLine(List<String> lines, BiFunction<Integer, Integer, Integer> bifunc) {
 		Objects.requireNonNull(lines, "Must have something to see shere getDotStarts");
 		Objects.requireNonNull(bifunc, "Cannot apply null to chars");
@@ -801,20 +1114,25 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
-	ActionListener updateClockAction = new ActionListener() {
+	/**
+	 * {@link ActionListener} used for clock updates
+	 */
+	private ActionListener updateClockAction = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			clock.setText(getApropriateTime());
-		}
-
-		private String getApropriateTime() {
-			Date date = new Date(System.currentTimeMillis());
-			return formatter.format(date);
+			clock.setText(formatter.format(new Date(System.currentTimeMillis())));
 		}
 	};
 
 // -----------------------------------------------------------------
 
+	/**
+	 * private variable holding implementation of {@link LocalizableAction} derived
+	 * from {@link Action} able to change text of appropriate
+	 * {@link java.awt.Component}s when language of app changes.
+	 * 
+	 * Used for deleting lines that are repeated.
+	 */
 	private final LocalizableAction unique = new LocalizableAction("unique", flp) {
 		private static final long serialVersionUID = 1L;
 
@@ -847,10 +1165,24 @@ public class JNotepadPP extends JFrame {
 
 	// -----------------------------------------------------------------
 
+	/**
+	 * Class implementing {@link JFileChooser} that has options for localization
+	 * 
+	 * @author juren
+	 *
+	 */
 	private static class MyJFileChooser extends JFileChooser {
 		private static final long serialVersionUID = 1L;
+		/**
+		 * variable storing {@link ILocalizationProvider} used for i18n
+		 */
 		private ILocalizationProvider parent;
 
+		/**
+		 * Standard constructor for {@link MyJFileChooser}
+		 * 
+		 * @param parent ILocalizationProvider used for i18n
+		 */
 		public MyJFileChooser(ILocalizationProvider parent) {
 			this.parent = parent;
 		}
