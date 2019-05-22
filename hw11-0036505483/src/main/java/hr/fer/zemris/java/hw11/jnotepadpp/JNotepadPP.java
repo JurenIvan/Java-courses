@@ -129,6 +129,7 @@ public class JNotepadPP extends JFrame {
 
 		model.createNewDocument();
 		updateClockAction.actionPerformed(null);
+		
 
 	}
 
@@ -222,6 +223,7 @@ public class JNotepadPP extends JFrame {
 				refreshStatusbar();
 				setSelectionDependant();
 				currentModel.getTextComponent().addCaretListener(e -> refreshStatusbar());
+				
 			}
 		});
 
@@ -361,9 +363,22 @@ public class JNotepadPP extends JFrame {
 		JMenuItem jmiHR = new JMenuItem("hr");
 		JMenuItem jmiDE = new JMenuItem("de");
 
-		jmiDE.addActionListener((e) -> LocalizationProvider.getInstance().setLanguage("de"));
-		jmiEN.addActionListener((e) -> LocalizationProvider.getInstance().setLanguage("en"));
-		jmiHR.addActionListener((e) -> LocalizationProvider.getInstance().setLanguage("hr"));
+		jmiDE.addActionListener((e) -> {
+			LocalizationProvider.getInstance().setLanguage("de");
+			this.pack();
+		});
+		jmiEN.addActionListener((e) -> {
+			LocalizationProvider.getInstance().setLanguage("en");
+			this.pack();
+		});
+		jmiHR.addActionListener((e) -> {
+			LocalizationProvider.getInstance().setLanguage("hr");
+			this.pack();
+		});
+
+//		jmiDE.addActionListener((e) -> this.pack());
+//		jmiEN.addActionListener((e) -> this.pack());
+//		jmiHR.addActionListener((e) -> this.pack());
 
 		lang.add(jmiEN);
 		lang.add(jmiHR);
@@ -555,6 +570,7 @@ public class JNotepadPP extends JFrame {
 			SingleDocumentModel sdm;
 			for (int i = 0; i < model.getNumberOfDocuments(); i++) {
 				sdm = model.getDocument(i);
+				model.setCurrentDocument(sdm);
 				if (sdm.isModified() == true) {
 					int result = getWantedOperation(sdm);
 					switch (result) {
@@ -571,6 +587,7 @@ public class JNotepadPP extends JFrame {
 						} catch (IllegalStateException e2) {
 							LocalizableJOptionPane.showMessageDialog(getContentPane(), "nothingSaved", "error",
 									JOptionPane.ERROR_MESSAGE, flp);
+							return false;
 						}
 						break;
 					case 1:

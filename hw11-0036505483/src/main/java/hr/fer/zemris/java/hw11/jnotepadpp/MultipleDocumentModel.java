@@ -20,4 +20,6 @@ public interface MultipleDocumentModel extends Iterable<SingleDocumentModel> {
 	int getNumberOfDocuments();
 
 	SingleDocumentModel getDocument(int index);
+	
+	void setCurrentDocument(SingleDocumentModel model);
 }

@@ -101,7 +101,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			}
 		});
 		
-
 		return focused;
 	}
 
@@ -200,5 +199,11 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			listener.documentRemoved(model);
 		}
 	}
+
+	@Override
+	public void setCurrentDocument(SingleDocumentModel model) {
+		setSelectedIndex(listOfDocuments.indexOf(model));
+	}
+
 
 }
