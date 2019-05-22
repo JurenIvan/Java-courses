@@ -15,7 +15,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Collator;
@@ -56,7 +55,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
-import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
@@ -72,7 +70,9 @@ public class JNotepadPP extends JFrame {
 
 	private static final String FIXED_PART_OF_PATH = ".\\icons\\";
 	private static final int DEFAULT_ICON_SIZE = 50;
-	protected static final int HOW_MUCH_CHARS_TO_SHOW = 15;
+	private static final int HOW_MUCH_CHARS_TO_SHOW = 15;
+	private static final int MINIMUM_WINDOW_SIZE = 500;
+	private static final String DEFAULT_LANGUAGE = "en";
 
 	private MultipleDocumentModel model;
 	private JPanel infoLeft;
@@ -80,14 +80,19 @@ public class JNotepadPP extends JFrame {
 	private JLabel clock;
 	private SimpleDateFormat formatter;
 	private HashMap<String, ImageIcon> loadedImages;
-	private FormLocalizationProvider flp = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);;
+	private FormLocalizationProvider flp = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
+	private String language=DEFAULT_LANGUAGE;
+	
+	{
+		LocalizationProvider.getInstance().setLanguage(DEFAULT_LANGUAGE);
+	}
 
 	public JNotepadPP() {
-		// probaj
+
 		loadedImages = new HashMap<>();
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		initGUI();
-		setMinimumSize(new Dimension(500, 500));
+		setMinimumSize(new Dimension(MINIMUM_WINDOW_SIZE, MINIMUM_WINDOW_SIZE));
 		pack();
 		setLocationRelativeTo(null);
 	}
@@ -129,7 +134,6 @@ public class JNotepadPP extends JFrame {
 
 		model.createNewDocument();
 		updateClockAction.actionPerformed(null);
-		
 
 	}
 
@@ -153,10 +157,10 @@ public class JNotepadPP extends JFrame {
 		infoRight.setBorder(BorderFactory.createLineBorder(Color.gray, 2));
 		clock.setBorder(BorderFactory.createLineBorder(Color.gray, 2));
 
-		JLabel lenghtLable = new LocalizableJLable("len", flp);
-		JLabel lnLable = new LocalizableJLable("lin", flp);
-		JLabel colLable = new LocalizableJLable("col", flp);
-		JLabel selLable = new LocalizableJLable("sel", flp);
+		LocalizableJLable lenghtLable = new LocalizableJLable("len", flp);
+		LocalizableJLable lnLable = new LocalizableJLable("lin", flp);
+		LocalizableJLable colLable = new LocalizableJLable("col", flp);
+		LocalizableJLable selLable = new LocalizableJLable("sel", flp);
 
 		clock.setHorizontalAlignment(SwingConstants.RIGHT);
 
@@ -182,7 +186,7 @@ public class JNotepadPP extends JFrame {
 		return new Insets(totalLen, lineOfcaret + 1, col, len);
 	}
 
-	private void refreshStatusbar() { // obavezno fix
+	private void refreshStatusbar() {
 		Insets data = calcThings();
 		((LocalizableJLable) infoLeft.getComponent(0)).setExtraText(String.valueOf(data.top));
 		((LocalizableJLable) infoRight.getComponent(0)).setExtraText(String.valueOf(data.left));
@@ -208,7 +212,11 @@ public class JNotepadPP extends JFrame {
 
 			@Override
 			public void documentAdded(SingleDocumentModel model) {
-				model.getTextComponent().addCaretListener(e -> refreshStatusbar());
+				model.getTextComponent().addCaretListener(e -> {
+					refreshStatusbar();
+					saveDocument.setEnabled(model.isModified());
+				});
+
 				setSelectionDependant();
 
 				model.getTextComponent().getCaret().addChangeListener((e) -> {
@@ -223,13 +231,14 @@ public class JNotepadPP extends JFrame {
 				refreshStatusbar();
 				setSelectionDependant();
 				currentModel.getTextComponent().addCaretListener(e -> refreshStatusbar());
-				
+				saveDocument.setEnabled(model.getCurrentDocument().isModified());
 			}
 		});
 
 		Timer t = new Timer(1000, updateClockAction);
 		formatter = new SimpleDateFormat("  yyyy/MM/dd HH:mm:ss  ");
 		t.start();
+
 	}
 
 	private void setTitleOfWindow() {
@@ -364,21 +373,20 @@ public class JNotepadPP extends JFrame {
 		JMenuItem jmiDE = new JMenuItem("de");
 
 		jmiDE.addActionListener((e) -> {
-			LocalizationProvider.getInstance().setLanguage("de");
+			language="de";
+			LocalizationProvider.getInstance().setLanguage(language);
 			this.pack();
 		});
 		jmiEN.addActionListener((e) -> {
-			LocalizationProvider.getInstance().setLanguage("en");
+			language="en";
+			LocalizationProvider.getInstance().setLanguage(language);
 			this.pack();
 		});
 		jmiHR.addActionListener((e) -> {
-			LocalizationProvider.getInstance().setLanguage("hr");
+			language="hr";
+			LocalizationProvider.getInstance().setLanguage(language);
 			this.pack();
 		});
-
-//		jmiDE.addActionListener((e) -> this.pack());
-//		jmiEN.addActionListener((e) -> this.pack());
-//		jmiHR.addActionListener((e) -> this.pack());
 
 		lang.add(jmiEN);
 		lang.add(jmiHR);
@@ -430,24 +438,8 @@ public class JNotepadPP extends JFrame {
 						JOptionPane.ERROR_MESSAGE, flp);
 				return;
 			}
-			String text = null;
-			try {
-				text = Files.readString(openedFilePath, Charset.forName("UTF-8"));
-			} catch (IOException e1) {
-				LocalizableJOptionPane.showMessageDialog(JNotepadPP.this, "errorWhilerReading", "error",
-						JOptionPane.ERROR_MESSAGE, flp);
-				return;
-			}
-			SingleDocumentModel focused = model.loadDocument(openedFilePath);
-
-			if (focused.isModified()) {
-				LocalizableJOptionPane.showMessageDialog(JNotepadPP.this, "FileSaveRequest", "warning",
-						JOptionPane.INFORMATION_MESSAGE, flp);
-				return;
-			}
-
-			model.getCurrentDocument().getTextComponent().setText(text);
-			model.getCurrentDocument().setModified(false);
+			
+			model.loadDocument(openedFilePath).setModified(false);
 		}
 	};
 
@@ -533,7 +525,10 @@ public class JNotepadPP extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			JFrame frame = new JFrame();
 			String[] options = { "save", "saveAsDocument", "no", "cancel" };
-
+			if(!model.getCurrentDocument().isModified()) {
+				model.closeDocument(model.getCurrentDocument());
+				return;
+			}
 			int result = LocalizableJOptionPane.showOptionDialog(frame.getContentPane(), "docModified", "warning",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, null, flp);
 			switch (result) {
@@ -571,32 +566,35 @@ public class JNotepadPP extends JFrame {
 			for (int i = 0; i < model.getNumberOfDocuments(); i++) {
 				sdm = model.getDocument(i);
 				model.setCurrentDocument(sdm);
-				if (sdm.isModified() == true) {
-					int result = getWantedOperation(sdm);
-					switch (result) {
-					case 0:
-						JFileChooser jfc = new MyJFileChooser(flp);
-						jfc.setDialogTitle("Save file");
-						if (jfc.showSaveDialog(JNotepadPP.this) != JFileChooser.APPROVE_OPTION) {
-							LocalizableJOptionPane.showMessageDialog(JNotepadPP.this, "exitcanceled", "warning",
-									JOptionPane.INFORMATION_MESSAGE, flp);
-							return false;
-						}
-						try {
-							model.saveDocument(sdm, jfc.getSelectedFile().toPath());
-						} catch (IllegalStateException e2) {
-							LocalizableJOptionPane.showMessageDialog(getContentPane(), "nothingSaved", "error",
-									JOptionPane.ERROR_MESSAGE, flp);
-							return false;
-						}
-						break;
-					case 1:
-						break;
-					default:
+				if (sdm.isModified() == false)
+					continue;
+				if (sdm.getFilePath() == null && sdm.getTextComponent().getText().isEmpty())
+					continue;
+				int result = getWantedOperation(sdm);
+				switch (result) {
+				case 0:
+					JFileChooser jfc = new MyJFileChooser(flp);
+					jfc.setDialogTitle("Save file");
+					if (jfc.showSaveDialog(JNotepadPP.this) != JFileChooser.APPROVE_OPTION) {
+						LocalizableJOptionPane.showMessageDialog(JNotepadPP.this, "exitcanceled", "warning",
+								JOptionPane.INFORMATION_MESSAGE, flp);
 						return false;
 					}
+					try {
+						model.saveDocument(sdm, jfc.getSelectedFile().toPath());
+					} catch (IllegalStateException e2) {
+						LocalizableJOptionPane.showMessageDialog(getContentPane(), "nothingSaved", "error",
+								JOptionPane.ERROR_MESSAGE, flp);
+						return false;
+					}
+					break;
+				case 1:
+					break;
+				default:
+					return false;
 				}
 			}
+
 			return true;
 		}
 
@@ -613,106 +611,32 @@ public class JNotepadPP extends JFrame {
 	private final LocalizableAction copy = new LocalizableAction("copy", flp) {
 		private static final long serialVersionUID = 1L;
 
-		Action a = new DefaultEditorKit.CopyAction();
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			a.actionPerformed(e);
+			model.getCurrentDocument().getTextComponent().copy();
 		}
 	};
-
-//			new AbstractAction() {
-//		private static final long serialVersionUID = 1L;
-//
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			Document doc = model.getCurrentDocument().getTextComponent().getDocument();
-//
-//			Caret caret = model.getCurrentDocument().getTextComponent().getCaret();
-//			int start = Math.min(caret.getDot(), caret.getMark());
-//			int len = Math.abs(caret.getDot() - caret.getMark());
-//
-//			if (len == 0) {
-//				clipBoard = "";
-//				return;
-//			}
-//
-//			try {
-//				clipBoard = doc.getText(start, len);
-//			} catch (BadLocationException ignorable) {
-//			}
-//		}
-//	};
 
 	// -----------------------------------------------------------------
 
 	private final LocalizableAction cut = new LocalizableAction("cut", flp) {
-
 		private static final long serialVersionUID = 1L;
-		Action a = new DefaultEditorKit.CutAction();
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			a.actionPerformed(e);
+			model.getCurrentDocument().getTextComponent().cut();
 		}
 	};
-//			new AbstractAction() {
-//		private static final long serialVersionUID = 1L;
-//
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			Document doc = model.getCurrentDocument().getTextComponent().getDocument();
-//
-//			Caret caret = model.getCurrentDocument().getTextComponent().getCaret();
-//			int start = Math.min(caret.getDot(), caret.getMark());
-//			int len = Math.abs(caret.getDot() - caret.getMark());
-//
-//			if (len == 0) {
-//				clipBoard = "";
-//				return;
-//			}
-//
-//			try {
-//				clipBoard = doc.getText(start, len);
-//				StringBuilder sb = new StringBuilder();
-//				sb.append(doc.getText(0, start));
-//				sb.append(doc.getText(start + len, doc.getLength() - 1));
-//				model.getCurrentDocument().getTextComponent().setText(sb.toString());
-//			} catch (BadLocationException ignorable) {
-//			}
-//			
-//		}
-//	};
-
 	// -----------------------------------------------------------------
 
 	private final LocalizableAction paste = new LocalizableAction("paste", flp) {
 		private static final long serialVersionUID = 1L;
-		Action a = new DefaultEditorKit.PasteAction();
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			a.actionPerformed(e);
+			model.getCurrentDocument().getTextComponent().paste();
 		}
 	};
-//			new AbstractAction() {
-//		private static final long serialVersionUID = 1L;
-//
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			Document doc = model.getCurrentDocument().getTextComponent().getDocument();
-//			int start = model.getCurrentDocument().getTextComponent().getCaret().getMark();
-//
-//			if (clipBoard == null || clipBoard.length() == 0)
-//				return;
-//
-//			try {
-//				doc.insertString(start, clipBoard, null);
-//			} catch (BadLocationException ignorable) {
-//			}
-//
-//		}
-//	};
 
 	// -----------------------------------------------------------------
 
@@ -727,11 +651,11 @@ public class JNotepadPP extends JFrame {
 			int numOfLines = count(text, (a) -> a == '\n');
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("Number of characters:");
+			sb.append(flp.getString("statNOC") + ':');
 			sb.append(String.valueOf(numOfChars));
-			sb.append("\nNumber of non-WhiteSpaces:");
+			sb.append('\n' + flp.getString("statNONWS") + ':');
 			sb.append(String.valueOf(numOfNonBlancks));
-			sb.append("\nNumber of lines:");
+			sb.append('\n' + flp.getString("statNOL") + ':');
 			sb.append(String.valueOf(numOfLines + 1));
 
 			JOptionPane.showMessageDialog(null, sb.toString());
@@ -821,22 +745,21 @@ public class JNotepadPP extends JFrame {
 
 	private final LocalizableAction ascending = new LocalizableAction("ascending", flp) {
 		private static final long serialVersionUID = 1L;
-		Collator hrCollator = Collator.getInstance(new Locale("hr")); /// fix
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			DoSortingMagic(hrCollator::compare);
+			Collator collator = Collator.getInstance(new Locale(language)); 
+			DoSortingMagic(collator::compare);
 		}
 	};
 
 	private final LocalizableAction descening = new LocalizableAction("descening", flp) {
 		private static final long serialVersionUID = 1L;
-
-		Collator hrCollator = Collator.getInstance(new Locale("hr"));
-
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			DoSortingMagic((a, b) -> hrCollator.compare(b, a));
+			Collator collator = Collator.getInstance(new Locale(language));
+			DoSortingMagic((a, b) -> collator.compare(b, a));
 		}
 	};
 
@@ -938,7 +861,6 @@ public class JNotepadPP extends JFrame {
 			if (Files.exists(path) && getDialogType() == SAVE_DIALOG) {
 
 				String[] options = { "yes", "no" };
-
 				int result = LocalizableJOptionPane.showOptionDialog(this, "overwriteQuestion", "existingFile",
 						JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, null, parent);
 

@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -68,6 +69,12 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		}
 		SingleDocumentModel newOne = createNewDocument(path);
 
+		String text = null;
+		try {
+			text = Files.readString(path, Charset.forName("UTF-8"));
+		} catch (IOException e1) {
+		}
+		newOne.getTextComponent().setText(text);		
 		return newOne;
 	}
 
@@ -77,7 +84,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		listOfDocuments.add(focused);
 
 		addTab(path == null ? "(unnamed)" : path.getFileName().toString(), new JScrollPane(focused.getTextComponent()));
-		setIconAt(listOfDocuments.indexOf(focused), getIconNamed("saveGreen.png"));
+		setIconAt(listOfDocuments.indexOf(focused), getIconNamed("saveGray.png"));
 		
 		setSelectedIndex(listOfDocuments.size() - 1);
 		notifyDocumentChangedListeners(prevFocused, focused);

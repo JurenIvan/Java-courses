@@ -8,7 +8,8 @@ import javax.swing.Action;
 public abstract class LocalizableAction extends AbstractAction{
 	private static final long serialVersionUID = 1L;
 	
-
+	private static String DESCRIPTION_KEY="SD";
+	
 	private ILocalizationListener listener;
 
 	public LocalizableAction(String key, ILocalizationProvider parent) {
@@ -21,7 +22,7 @@ public abstract class LocalizableAction extends AbstractAction{
 		};
 		
 		putValue(Action.NAME, parent.getString(key));
-		putValue(Action.SHORT_DESCRIPTION, parent.getString(key+"SD"));
+		putValue(Action.SHORT_DESCRIPTION, parent.getString(key+DESCRIPTION_KEY));
 		
 		listener.localizationChanged();
 		parent.addLocalizationListener(new ILocalizationListener() {
@@ -29,7 +30,7 @@ public abstract class LocalizableAction extends AbstractAction{
 			@Override
 			public void localizationChanged() {
 				putValue(Action.NAME, parent.getString(key));
-				putValue(Action.SHORT_DESCRIPTION, parent.getString(key+"SD"));
+				putValue(Action.SHORT_DESCRIPTION, parent.getString(key+DESCRIPTION_KEY));
 			}
 		});
 	}
