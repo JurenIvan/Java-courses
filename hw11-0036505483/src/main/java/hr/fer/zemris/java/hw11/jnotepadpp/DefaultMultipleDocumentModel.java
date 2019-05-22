@@ -6,13 +6,13 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -23,6 +23,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	private List<SingleDocumentModel> listOfDocuments;
 	private List<MultipleDocumentListener> listeners;
 	private SingleDocumentModel focused;
+	private HashMap<String, ImageIcon> loadedImages;
 
 	private static final String FIXED_PART_OF_PATH = ".\\icons\\";
 	private static final int DEFAULT_ICON_SIZE = 20;
@@ -30,6 +31,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	public DefaultMultipleDocumentModel() {
 		listOfDocuments = new ArrayList<>();
 		listeners = new ArrayList<>();
+		loadedImages=new HashMap<>();
 
 		addChangeListener(e -> { 
 			notifyDocumentChangedListeners(focused, focused=listOfDocuments.get(getSelectedIndex())); 
@@ -107,9 +109,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	public void saveDocument(SingleDocumentModel model, Path newPath) {
 		for (var doc : listOfDocuments) {
 			if (newPath.equals(doc.getFilePath()) && !doc.equals(focused)) {
-				JOptionPane.showMessageDialog(this, "Nothing saved because specified file is already opened.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
+				throw new IllegalStateException();
 			}
 		}
 		
@@ -117,7 +117,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		try {
 			Files.write(newPath, model.getTextComponent().getText().getBytes());
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, "Error while saving", "Error", JOptionPane.ERROR_MESSAGE);
+			throw new IllegalStateException();
 		}
 		model.setModified(false);
 		notifyDocumentAddedListeners(model);
@@ -166,11 +166,16 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 	private ImageIcon getIconNamed(String name) {
 		Objects.requireNonNull(name, "icon must have a name");
-
+		
+		ImageIcon ic=loadedImages.get(name);
+		if(ic!=null) return ic;
+		
 		try (InputStream is = this.getClass().getResourceAsStream(FIXED_PART_OF_PATH + name)) {
 			byte[] bytes = is.readAllBytes();
-			return new ImageIcon((new ImageIcon(bytes)).getImage().getScaledInstance(DEFAULT_ICON_SIZE,
+			ImageIcon icon=new ImageIcon((new ImageIcon(bytes)).getImage().getScaledInstance(DEFAULT_ICON_SIZE,
 					DEFAULT_ICON_SIZE, Image.SCALE_DEFAULT));
+			loadedImages.put(name, icon);
+			return icon;
 		} catch (IOException e) {
 			throw new IllegalArgumentException("No image on provided path");
 		}
