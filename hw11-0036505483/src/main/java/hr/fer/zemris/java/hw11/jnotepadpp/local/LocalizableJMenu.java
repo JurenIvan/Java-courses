@@ -2,6 +2,12 @@ package hr.fer.zemris.java.hw11.jnotepadpp.local;
 
 import javax.swing.JMenu;
 
+/**
+ * Class that models {@link JMenu} capable of i18n.
+ * 
+ * @author juren
+ *
+ */
 public class LocalizableJMenu extends JMenu {
 
 	private static final long serialVersionUID = 1L;

@@ -36,7 +36,7 @@ public interface SingleDocumentModel {
 	/**
 	 * Getter for boolean flag that is set when any modification happens
 	 * 
-	 * @returnoolean flag that is set when any modification happens
+	 * @return boolean flag that is set when any modification happens
 	 */
 	boolean isModified();
 
