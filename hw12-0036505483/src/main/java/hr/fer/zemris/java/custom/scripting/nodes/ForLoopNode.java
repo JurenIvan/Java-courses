@@ -112,9 +112,9 @@ public class ForLoopNode extends Node {
 		if(stepExpression!=null) {
 			sb.append(stepExpression.toString());
 			sb.append("");
-		}else {
-			sb.append("$}");
 		}
+		sb.append("$}");
+		
 		
 		
 		for(int i=0;i<numberOfChildren();i++) {

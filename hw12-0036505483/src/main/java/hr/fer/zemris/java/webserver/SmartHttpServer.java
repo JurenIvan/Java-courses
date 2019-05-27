@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.webserver;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,6 +22,8 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
 public class SmartHttpServer {
@@ -57,7 +58,6 @@ public class SmartHttpServer {
 		for (String mimeProperty : mimeProperties.stringPropertyNames()) {
 			mimeTypes.put(mimeProperty, mimeProperties.getProperty(mimeProperty));
 		}
-		
 
 	}
 
@@ -70,16 +70,23 @@ public class SmartHttpServer {
 	}
 
 	protected synchronized void stop() {
-		serverThread.stop();
+		serverThread.terminateThread();
 		threadPool.shutdown();
 	}
 
 	protected class ServerThread extends Thread {
+
+		private boolean run = true;
+
+		public void terminateThread() {
+			this.run = false;
+		}
+
 		@Override
 		public void run() {
 			try (ServerSocket serverSocket = new ServerSocket()) {
 				serverSocket.bind(new InetSocketAddress(InetAddress.getByName(address), port));
-				while (true) {
+				while (run) {
 					Socket client = serverSocket.accept();
 					ClientWorker cw = new ClientWorker(client);
 					threadPool.submit(cw);
@@ -91,7 +98,7 @@ public class SmartHttpServer {
 		}
 	}
 
-	private class ClientWorker implements Runnable {
+	private class ClientWorker implements Runnable, IDispatcher {
 		private Socket csocket;
 		private PushbackInputStream istream;
 		private OutputStream ostream;
@@ -153,54 +160,35 @@ public class SmartHttpServer {
 					return;
 				}
 
-				// get path
-		//		if (firstLine[1] == null) {	//needing no path is legit i suppose
-		//			sendError(ostream, 400, "HTTP Version Not Supported");
-		//			return;
-		//		}
-				String requestedPath = firstLine[1];
-				String requestedPathSplitted[] = requestedPath.split("\\?");
-
-				// get param part
-				if (requestedPathSplitted.length == 2) {
-					if (!parseParameters(requestedPathSplitted[1])) {
-						sendError(ostream, 400, "Wrong parameters format");
-						return;
-					}
-				} else if (requestedPathSplitted.length != 1) {
-					sendError(ostream, 400, "Bad request");
-					return;
-				}
-				// get file part
-				String path = requestedPathSplitted[0];
-				Path requestedFile = documentRoot.resolve(path.substring(1));
-				
-				if (!requestedFile.normalize().startsWith(documentRoot)) {
-					sendError(ostream, 403, "Forbidden");
-					return;
-				}
-				if (!Files.isReadable(requestedFile)) {
-					sendError(ostream, 404, "File not found");
-					return;
-				}
-				
-
 				for (var head : headers) {
 					if (head.startsWith("Host:")) {
 						host = head.split(":")[1].strip();
 						break;
 					}
 				}
-				
-			//	serveFile(ostream, requestedFile);
-				Long contentLenght = Files.size(requestedFile);
-				RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies, contentLenght);
-				rc.setMimeType(getMimeType(requestedFile));
-				rc.setStatusText("200");
-				rc.write(Files.readAllBytes(requestedFile));
-				ostream.flush();
-				
-			} catch (IOException e) {
+
+//				 get path
+//				 if (firstLine[1] == null) { //needing no path is legit i suppose
+//				 sendError(ostream, 400, "HTTP Version Not Supported");
+//				 return;
+//				 }
+				String requestedPath = firstLine[1];
+				String requestedPathSplitted[] = requestedPath.split("\\?");
+
+				// get file part
+				String path = requestedPathSplitted[0];
+				Path requestedFile = documentRoot.resolve(path.substring(1));
+
+				// get param part
+				if (requestedPathSplitted.length == 2) {
+					parseParameters(requestedPathSplitted[1]);
+				} else if (requestedPathSplitted.length != 1) {
+					sendError(ostream, 400, "Bad request");
+					return;
+				}
+				internalDispatchRequest(requestedFile.toString(), true);
+
+			} catch (Exception e) {
 				e.printStackTrace();//
 			}
 		}
@@ -217,11 +205,48 @@ public class SmartHttpServer {
 			return true;
 		}
 
+		public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
+
+			if (!Paths.get(urlPath).normalize().startsWith(documentRoot)) {
+				sendError(ostream, 403, "Forbidden");
+				return;
+			}
+
+			if (!Files.isReadable(Paths.get(urlPath))) {
+				sendError(ostream, 404, "File not found");
+				return;
+			}
+			RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+			rc.setMimeType(getMimeType(urlPath));
+			rc.setStatusText("200");
+			if (urlPath.endsWith(".smscr")) {
+				byte[] bytes=Files.readAllBytes(Paths.get(urlPath));
+				String text=new String(bytes);
+				SmartScriptEngine sse=new SmartScriptEngine((new SmartScriptParser(text)).getDocumentNode(), rc);
+				sse.execute();
+				
+				ostream.flush();
+				ostream.close();
+				return;
+			}
+
+			// serveFile(ostream, requestedFile);
+			//Long contentLenght = Files.size(Paths.get(urlPath));
+			
+			
+			rc.write(Files.readAllBytes(Paths.get(urlPath)));
+			ostream.flush();
+		}
+
+		public void dispatchRequest(String urlPath) throws Exception {
+			internalDispatchRequest(urlPath, false);
+		}
+
 	}
 
-	private static String getMimeType(Path requestedFile) {
+	private static String getMimeType(String requestedFile) {
 		String extension = null;
-		int i = requestedFile.toString().lastIndexOf('.');
+		int i = requestedFile.lastIndexOf('.');
 		if (i > 0) {
 			extension = requestedFile.toString().substring(i + 1);
 		}
@@ -306,25 +331,25 @@ public class SmartHttpServer {
 		return headers;
 	}
 
-	private static void serveFile(OutputStream cos, Path requestedFile) throws IOException {
-		long len = Files.size(requestedFile);
-		String mime = getMimeType(requestedFile.getFileName());
-		try (InputStream is = new BufferedInputStream(Files.newInputStream(requestedFile))) {
-			cos.write(("HTTP/1.1 200 OK\r\n" + "Server: simple java server\r\n" + "Content-Type: " + mime + "\r\n"
-					+ "Content-Length: " + len + "\r\n" + "Connection: close\r\n" + "\r\n")
-							.getBytes(StandardCharsets.US_ASCII));
-
-			byte[] buf = new byte[1024];
-			while (true) {
-				int r = is.read(buf);
-				if (r < 1)
-					break;
-				cos.write(buf, 0, r);
-			}
-			cos.flush();
-		}
-
-	}
+//	private static void serveFile(OutputStream cos, Path requestedFile) throws IOException {
+//		long len = Files.size(requestedFile);
+//		String mime = getMimeType(requestedFile.getFileName());
+//		try (InputStream is = new BufferedInputStream(Files.newInputStream(requestedFile))) {
+//			cos.write(("HTTP/1.1 200 OK\r\n" + "Server: simple java server\r\n" + "Content-Type: " + mime + "\r\n"
+//					+ "Content-Length: " + len + "\r\n" + "Connection: close\r\n" + "\r\n")
+//							.getBytes(StandardCharsets.US_ASCII));
+//
+	// byte[] buf = new byte[1024];
+	// while (true) {
+	// int r = is.read(buf);
+	// if (r < 1)
+	// break;
+	// cos.write(buf, 0, r);
+	// }
+	// cos.flush();
+	// }
+//
+//	}
 
 	public static void main(String[] args) throws IOException {
 		new SmartHttpServer(args[0]).start();

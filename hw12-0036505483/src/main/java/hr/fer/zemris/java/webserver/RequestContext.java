@@ -31,6 +31,7 @@ public class RequestContext {
 	private static final String MIME_TYPE_CHARSET_NEEDED = "text/";
 
 	private static RCCookie rcCookie;
+	
 	private OutputStream outputStream;
 	private Charset charset;
 
@@ -47,6 +48,8 @@ public class RequestContext {
 
 	private boolean headerGenerated;
 
+	private IDispatcher dispatcher;
+
 	private RequestContext() {
 		encoding = DEFAULT_ENCODING;
 		statusCode = DEFAULT_STATUS_CODE;
@@ -58,6 +61,19 @@ public class RequestContext {
 	}
 
 	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
+			Map<String, String> persistentParameters, List<RCCookie> outputCookies,Map<String, String> temporaryParameters, IDispatcher dispatcher,Long contentLenght) {
+		this(outputStream, parameters, persistentParameters, outputCookies,temporaryParameters,dispatcher);
+		this.contentLength = contentLenght;
+	}
+	
+	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
+			Map<String, String> persistentParameters, List<RCCookie> outputCookies,Map<String, String> temporaryParameters, IDispatcher dispatcher) {
+		this(outputStream, parameters, persistentParameters, outputCookies);
+		this.temporaryParameters=temporaryParameters;
+		this.dispatcher=dispatcher;
+	}
+
+	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
 			Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
 		this();
 		this.outputStream = Objects.requireNonNull(outputStream, "OutputStream provided must not be null reference");
@@ -66,11 +82,11 @@ public class RequestContext {
 		this.persistentParameters = new HashMap<String, String>(persistentParameters);
 		this.outputCookies = new ArrayList<RCCookie>();
 	}
-	
+
 	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
-			Map<String, String> persistentParameters, List<RCCookie> outputCookies,Long contentLenght) {
-		this(outputStream,parameters,persistentParameters,outputCookies);
-		this.contentLength=contentLenght;
+			Map<String, String> persistentParameters, List<RCCookie> outputCookies, Long contentLenght) {
+		this(outputStream, parameters, persistentParameters, outputCookies);
+		this.contentLength = contentLenght;
 	}
 
 	/**
@@ -161,6 +177,13 @@ public class RequestContext {
 	public String getSessionID() {
 		return new String();
 	}
+	
+	/**
+	 * @return the dispatcher
+	 */
+	public IDispatcher getDispatcher() {
+		return dispatcher;
+	}
 
 	/**
 	 * * method that stores a value to temporaryParameters map
@@ -170,6 +193,15 @@ public class RequestContext {
 	 */
 	public void setTemporaryParameter(String name, String value) {
 		temporaryParameters.put(name, value);
+	}
+
+	/**
+	 * @param contentLength the contentLength to set
+	 */
+	public void setContentLength(Long contentLength) {
+		if (!this.headerGenerated) {
+			this.contentLength = contentLength;
+		}
 	}
 
 	/**
@@ -184,15 +216,15 @@ public class RequestContext {
 	public RequestContext write(String text) throws IOException {
 		return write(text.getBytes(charset));
 	}
-	
+
 	public RequestContext write(byte[] data) throws IOException {
 		return write(data, 0, data.length);
 	}
-	
+
 	public RequestContext write(byte[] data, int offset, int len) throws IOException {
 		if (!this.headerGenerated) {
 			charset = Charset.forName(encoding);
-			byte[] generatedHeader=generateHeader();
+			byte[] generatedHeader = generateHeader();
 			outputStream.write(generatedHeader, 0, generatedHeader.length);
 			this.headerGenerated = true;
 		}
@@ -202,7 +234,7 @@ public class RequestContext {
 
 	private byte[] generateHeader() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append(PROTOCOL_TAG);
 		sb.append(' ');
 		sb.append(statusCode);
@@ -211,7 +243,7 @@ public class RequestContext {
 		sb.append(LINE_SEPARATOR);
 		sb.append(CONTENT_TYPE_TAG);
 		sb.append(' ');
-		if (mimeType.startsWith(MIME_TYPE_CHARSET_NEEDED)) {
+		if (mimeType!=null && mimeType.startsWith(MIME_TYPE_CHARSET_NEEDED)) {
 			sb.append(mimeType);
 			sb.append(MIME_TYPE_CHARSET_ADDON);
 			sb.append(encoding);
@@ -219,14 +251,14 @@ public class RequestContext {
 			sb.append(mimeType);
 		}
 		sb.append(LINE_SEPARATOR);
-		
-		if(contentLength!=null) {
+
+		if (contentLength != null) {
 			sb.append(CONTENT_LENGTH_ADDON);
 			sb.append(contentLength);
 			sb.append(LINE_SEPARATOR);
 		}
-		
-		for(var cookie:outputCookies) {
+
+		for (var cookie : outputCookies) {
 			sb.append(cookieOutput(cookie));
 			sb.append(LINE_SEPARATOR);
 		}
@@ -235,34 +267,34 @@ public class RequestContext {
 	}
 
 	private String cookieOutput(RCCookie cookie) {
-		StringBuilder sb=new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		sb.append(SET_COOKIE_TAG);
 		sb.append(' ');
-		if(cookie.name!=null) {
+		if (cookie.name != null) {
 			sb.append(cookie.name);
 			sb.append("=\"");
 			sb.append(cookie.value);
 			sb.append("\"; ");
 		}
-		if(cookie.domain!=null) {
+		if (cookie.domain != null) {
 			sb.append(DOMAIN_TAG);
 			sb.append('=');
 			sb.append(cookie.domain);
 			sb.append("; ");
 		}
-		if(cookie.path!=null) {
+		if (cookie.path != null) {
 			sb.append("Path=");
 			sb.append(cookie.path);
 			sb.append("; ");
 		}
-		if(cookie.maxAge!=null) {
+		if (cookie.maxAge != null) {
 			sb.append(MAX_AGE_TAG);
 			sb.append('=');
 			sb.append(cookie.maxAge);
 			sb.append("; ");
 		}
-	
-		return sb.toString().substring(0, sb.length()-2);
+
+		return sb.toString().substring(0, sb.length() - 2);
 	}
 
 	public void DOSTUFF() {

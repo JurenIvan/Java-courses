@@ -156,23 +156,15 @@ public class SmartScriptEngine {
 			} else if (token.asText().equals("paramGet")) {
 				ValueWrapper dv = tempStack.pop();
 				ValueWrapper name = tempStack.pop();
-				
-				 String paramGetValue = requestContext.getParameter(name.toString());
-                 if (paramGetValue == null) {
-                     paramGetValue = dv.toString();
-                 }
-                 tempStack.push(new ValueWrapper(paramGetValue));
-				
-			//	String value = requestContext.getParameter(name.getValue().toString());
-			//	tempStack.push(new ValueWrapper(value == null ? dv.getValue().toString() : value));
-
+				String value = requestContext.getParameter(name.getValue().toString()); // mozda i
+																									// .getvalue().toString()
+				tempStack.push(new ValueWrapper(value == null ? dv.getValue().toString() : value));
 			} else if (token.asText().equals("pparamGet")) {
 				ValueWrapper dv = tempStack.pop();
 				ValueWrapper name = tempStack.pop();
 				String value = requestContext.getPersistentParameter(name.getValue().toString()); // mozda i
 																									// .getvalue().toString()
 				tempStack.push(new ValueWrapper(value == null ? dv.getValue().toString() : value));
-
 			} else if (token.asText().equals("pparamSet")) {
 				ValueWrapper name = tempStack.pop();
 				ValueWrapper value = tempStack.pop();
@@ -194,7 +186,6 @@ public class SmartScriptEngine {
 				requestContext.setTemporaryParameter(name.getValue().toString(), value.getValue().toString());
 
 			} else if (token.asText().equals("tparamDel")) {
-
 				ValueWrapper name = tempStack.pop();
 				requestContext.removeTemporaryParameter(name.getValue().toString());
 
@@ -217,10 +208,12 @@ public class SmartScriptEngine {
 	};
 
 	public static void main(String[] args) {
-		String documentBody = readFromDisk("fibonaccih.smscr");
+		String documentBody = readFromDisk(".\\webroot\\scripts\\zbrajanje.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
 		Map<String,String> persistentParameters = new HashMap<String, String>();
 		List<RCCookie> cookies = new ArrayList<RequestContext.RCCookie>();
+		parameters.put("a", "4");
+		parameters.put("b", "2");
 		// create engine and execute it
 		new SmartScriptEngine(
 		new SmartScriptParser(documentBody).getDocumentNode(),
@@ -230,7 +223,7 @@ public class SmartScriptEngine {
 
 	}
 
-	private void execute() {
+	public void execute() {
 		documentNode.accept(visitor);
 	}
 
