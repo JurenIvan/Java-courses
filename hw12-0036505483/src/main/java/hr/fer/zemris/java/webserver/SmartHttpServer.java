@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
+import hr.fer.zemris.java.webserver.workers.IWebWorker;
 
 public class SmartHttpServer {
 	private String address;
@@ -37,7 +38,10 @@ public class SmartHttpServer {
 	private ExecutorService threadPool;
 	private Path documentRoot;
 
-	public SmartHttpServer(String configFileName) throws IOException {
+	private Map<String, IWebWorker> workersMap;
+
+	public SmartHttpServer(String configFileName)
+			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Properties serverProperties = new Properties();
 		Properties mimeProperties = new Properties();
@@ -57,6 +61,13 @@ public class SmartHttpServer {
 		mimeTypes = new HashMap<String, String>();
 		for (String mimeProperty : mimeProperties.stringPropertyNames()) {
 			mimeTypes.put(mimeProperty, mimeProperties.getProperty(mimeProperty));
+		}
+
+		workersMap = new HashMap<String, IWebWorker>();
+		for (var path : workersProperties.stringPropertyNames()) {
+			Class<?> referenceToClass = this.getClass().getClassLoader().loadClass(workersProperties.getProperty(path));
+			Object newObject = referenceToClass.newInstance();
+			workersMap.put(path, (IWebWorker) newObject);
 		}
 
 	}
@@ -110,6 +121,7 @@ public class SmartHttpServer {
 		private Map<String, String> permPrams = new HashMap<String, String>();
 		private List<RCCookie> outputCookies = new ArrayList<RequestContext.RCCookie>();
 		private String SID;
+		private RequestContext context;
 
 		public ClientWorker(Socket csocket) {
 			super();
@@ -206,35 +218,53 @@ public class SmartHttpServer {
 		}
 
 		public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
-
+			
+			if(context==null) {
+				context= new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+			}
+			
 			if (!Paths.get(urlPath).normalize().startsWith(documentRoot)) {
 				sendError(ostream, 403, "Forbidden");
 				return;
+			}
+			
+			Path pathP=Paths.get(urlPath);
+			String name=pathP.getName(pathP.getNameCount()-1).toString();
+			for(var path:workersMap.keySet()) {
+				if(path.substring(1).equals(name)) {
+					workersMap.get(path).processRequest(context);
+					ostream.flush();
+					return;
+				}
 			}
 
 			if (!Files.isReadable(Paths.get(urlPath))) {
 				sendError(ostream, 404, "File not found");
 				return;
 			}
-			RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
-			rc.setMimeType(getMimeType(urlPath));
-			rc.setStatusText("200");
+			
+			context.setMimeType(getMimeType(urlPath));
+			context.setStatusText("200");
+			
+			
+			
+			
 			if (urlPath.endsWith(".smscr")) {
-				byte[] bytes=Files.readAllBytes(Paths.get(urlPath));
-				String text=new String(bytes);
-				SmartScriptEngine sse=new SmartScriptEngine((new SmartScriptParser(text)).getDocumentNode(), rc);
+				byte[] bytes = Files.readAllBytes(Paths.get(urlPath));
+				String text = new String(bytes);
+				SmartScriptEngine sse = new SmartScriptEngine((new SmartScriptParser(text)).getDocumentNode(), context);
 				sse.execute();
-				
+
 				ostream.flush();
 				ostream.close();
 				return;
 			}
 
 			// serveFile(ostream, requestedFile);
-			//Long contentLenght = Files.size(Paths.get(urlPath));
-			
-			
-			rc.write(Files.readAllBytes(Paths.get(urlPath)));
+			 Long contentLenght = Files.size(Paths.get(urlPath));
+			context.setContentLength(contentLenght);
+			context.write(Files.readAllBytes(Paths.get(urlPath)));
+		
 			ostream.flush();
 		}
 
@@ -331,27 +361,8 @@ public class SmartHttpServer {
 		return headers;
 	}
 
-//	private static void serveFile(OutputStream cos, Path requestedFile) throws IOException {
-//		long len = Files.size(requestedFile);
-//		String mime = getMimeType(requestedFile.getFileName());
-//		try (InputStream is = new BufferedInputStream(Files.newInputStream(requestedFile))) {
-//			cos.write(("HTTP/1.1 200 OK\r\n" + "Server: simple java server\r\n" + "Content-Type: " + mime + "\r\n"
-//					+ "Content-Length: " + len + "\r\n" + "Connection: close\r\n" + "\r\n")
-//							.getBytes(StandardCharsets.US_ASCII));
-//
-	// byte[] buf = new byte[1024];
-	// while (true) {
-	// int r = is.read(buf);
-	// if (r < 1)
-	// break;
-	// cos.write(buf, 0, r);
-	// }
-	// cos.flush();
-	// }
-//
-//	}
-
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args)
+			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		new SmartHttpServer(args[0]).start();
 		;
 	}
