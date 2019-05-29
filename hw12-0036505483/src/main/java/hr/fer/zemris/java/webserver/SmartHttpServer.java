@@ -82,6 +82,8 @@ public class SmartHttpServer {
 
 	protected synchronized void stop() {
 		serverThread.terminateThread();
+		serverThread.interrupt();
+		serverThread.stop();
 		threadPool.shutdown();
 	}
 
@@ -96,7 +98,9 @@ public class SmartHttpServer {
 		@Override
 		public void run() {
 			try (ServerSocket serverSocket = new ServerSocket()) {
-				serverSocket.bind(new InetSocketAddress(InetAddress.getByName(address), port));
+				// serverSocket.bind(new InetSocketAddress(InetAddress.getByName(address),
+				// port));
+				serverSocket.bind(new InetSocketAddress((InetAddress) null, port));
 				while (run) {
 					Socket client = serverSocket.accept();
 					ClientWorker cw = new ClientWorker(client);
@@ -139,6 +143,7 @@ public class SmartHttpServer {
 				byte[] request = readRequest(istream);
 				if (request == null) {
 					sendError(ostream, 400, "Bad request");
+					csocket.close();
 					return;
 				}
 				String requestStr = new String(request, StandardCharsets.US_ASCII);
@@ -148,27 +153,32 @@ public class SmartHttpServer {
 				String[] firstLine = headers.isEmpty() ? null : headers.get(0).split(" ");
 				if (firstLine == null || firstLine.length != 3) {
 					sendError(ostream, 400, "Bad request");
+					csocket.close();
 					return;
 				}
 				// determine method
 				if (firstLine[0] == null) {
 					sendError(ostream, 400, "Method Not Allowed");
+					csocket.close();
 					return;
 				}
 				method = firstLine[0].toUpperCase();
 				if (!method.equals("GET")) {
 					sendError(ostream, 400, "Method Not Allowed");
+					csocket.close();
 					return;
 				}
 
 				// determine version
 				if (firstLine[2] == null) {
 					sendError(ostream, 400, "HTTP Version must be declared");
+					csocket.close();
 					return;
 				}
 				version = firstLine[2].toUpperCase();
 				if (!version.equals("HTTP/1.1") && !version.equals("HTTP/1.0")) {
 					sendError(ostream, 400, "HTTP Version Not Supported");
+					csocket.close();
 					return;
 				}
 
@@ -196,6 +206,7 @@ public class SmartHttpServer {
 					parseParameters(requestedPathSplitted[1]);
 				} else if (requestedPathSplitted.length != 1) {
 					sendError(ostream, 400, "Bad request");
+					csocket.close();
 					return;
 				}
 				internalDispatchRequest(requestedFile.toString(), true);
@@ -218,37 +229,47 @@ public class SmartHttpServer {
 		}
 
 		public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
-			
-			if(context==null) {
-				context= new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+
+
+			if (context == null) {
+				context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
 			}
-			
+
 			if (!Paths.get(urlPath).normalize().startsWith(documentRoot)) {
 				sendError(ostream, 403, "Forbidden");
+				csocket.close();
+				return;
+			}
+
+			if (urlPath.split("\\?")[0].split("ext").length == 2) {
+				String[] niz = urlPath.split("\\?");
+				String[] niz2 = niz[0].split("ext");
+
+				String wanted = niz2[niz2.length - 1].substring(1);
+
+				for (var path : workersMap.keySet()) {
+					String[] lol=workersMap.get(path).getClass().getName().split("\\.");
+					if (wanted.equals(lol[lol.length-1])) {
+						workersMap.get(path).processRequest(context);
+						ostream.flush();
+						csocket.close();
+						return;
+					}
+				}
 				return;
 			}
 			
-			Path pathP=Paths.get(urlPath);
-			String name=pathP.getName(pathP.getNameCount()-1).toString();
-			for(var path:workersMap.keySet()) {
-				if(path.substring(1).equals(name)) {
-					workersMap.get(path).processRequest(context);
-					ostream.flush();
-					return;
-				}
-			}
 
 			if (!Files.isReadable(Paths.get(urlPath))) {
 				sendError(ostream, 404, "File not found");
+				csocket.close();
+				
 				return;
 			}
-			
+
 			context.setMimeType(getMimeType(urlPath));
 			context.setStatusText("200");
-			
-			
-			
-			
+
 			if (urlPath.endsWith(".smscr")) {
 				byte[] bytes = Files.readAllBytes(Paths.get(urlPath));
 				String text = new String(bytes);
@@ -257,15 +278,17 @@ public class SmartHttpServer {
 
 				ostream.flush();
 				ostream.close();
+
 				return;
 			}
 
 			// serveFile(ostream, requestedFile);
-			 Long contentLenght = Files.size(Paths.get(urlPath));
+			Long contentLenght = Files.size(Paths.get(urlPath));
 			context.setContentLength(contentLenght);
 			context.write(Files.readAllBytes(Paths.get(urlPath)));
-		
+
 			ostream.flush();
+			csocket.close();
 		}
 
 		public void dispatchRequest(String urlPath) throws Exception {

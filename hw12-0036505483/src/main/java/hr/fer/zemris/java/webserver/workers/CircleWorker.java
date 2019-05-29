@@ -23,9 +23,9 @@ public class CircleWorker implements IWebWorker {
 		g2d.fillOval(0, 0, bim.getWidth(), bim.getHeight());
 		g2d.dispose();
 		context.setMimeType("image/png");
-		ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(bim, "png", baos);
-		byte[] podaci=baos.toByteArray();
+		byte[] podaci = baos.toByteArray();
 		context.write(podaci);
 	}
 }
