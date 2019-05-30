@@ -1,0 +1,56 @@
+{$= "text/html" @setMimeType $}
+
+<html>
+	<head>
+		<title>HomePage</title>
+		
+		<style>
+			body {background-color: {$= "background" "7F7F7F" @tparamGet $};}
+		</style>
+	</head>
+ 
+	<body>
+		<a href="scripts/osnovni.smscr">osnovni.smscr</a><br>
+		<a href="scripts/brojPoziva.smscr">brojPoziva.smscr</a><br>
+		<a href="scripts/fibonaccih.smscr">fibonaccih.smscr</a><br>
+		<a href="scripts/fibonaccih.smscr">fibonaccih.smscr</a><br>
+		<a href="/ext/HelloWorker">HelloWorker</a><br>
+		<a href="/ext/CircleWorker">CircleWorker</a><br>
+		<br>
+		
+		
+		<br>
+		Enter two numbers, calculates sum.
+		<br>
+		
+		<form action="/calc" method="get" target="_blank">
+				a:	<input type="text" name="a" value="1"><br>
+				b:	<input type="text" name="b" value="2"><br>
+					<input type="submit" value="Submit">
+		</form>
+		
+		<br>
+		Color selector list
+		<br>
+		
+			<select name="bgcolor" form="dropDownColor">
+				<option value="ff0000">Red</option>
+				<option value="000099">Blue</option>
+				<option value="ffffff">White</option>
+				<option value="009933">Green</option>
+				<option value="ffff00">Yellow</option>
+				<option value="ff66ff">Pink</option>
+				<option value="ff9900">Orange</option>
+				<option value="00ffcc">Cyan</option>
+				<option value="660066">Purple</option>
+			</select>
+		<form action="/setbgcolor" method="get" id="dropDownColor">
+			<input type="submit" value="Submit">
+		</form>
+			
+	</body>
+	
+	
+	
+
+</html>

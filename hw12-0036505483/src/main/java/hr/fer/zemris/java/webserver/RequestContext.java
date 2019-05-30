@@ -49,6 +49,7 @@ public class RequestContext {
 	private boolean headerGenerated;
 
 	private IDispatcher dispatcher;
+	private String SID;
 
 	private RequestContext() {
 		encoding = DEFAULT_ENCODING;
@@ -61,32 +62,26 @@ public class RequestContext {
 	}
 
 	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
-			Map<String, String> persistentParameters, List<RCCookie> outputCookies,Map<String, String> temporaryParameters, IDispatcher dispatcher,Long contentLenght) {
-		this(outputStream, parameters, persistentParameters, outputCookies,temporaryParameters,dispatcher);
-		this.contentLength = contentLenght;
-	}
-	
-	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
-			Map<String, String> persistentParameters, List<RCCookie> outputCookies,Map<String, String> temporaryParameters, IDispatcher dispatcher) {
-		this(outputStream, parameters, persistentParameters, outputCookies);
+			Map<String, String> persistentParameters, List<RCCookie> outputCookies,Map<String, String> temporaryParameters, IDispatcher dispatcher,String SID) {
+		this(outputStream, parameters, persistentParameters, outputCookies,SID);
 		this.temporaryParameters=temporaryParameters;
 		this.dispatcher=dispatcher;
 	}
 
 	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
-			Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
+			Map<String, String> persistentParameters, List<RCCookie> outputCookies,String SID) {
 		this();
 		this.outputStream = Objects.requireNonNull(outputStream, "OutputStream provided must not be null reference");
 		this.parameters = Collections.unmodifiableMap(new HashMap<String, String>(parameters));
 		this.temporaryParameters = new HashMap<String, String>();
-		this.persistentParameters = new HashMap<String, String>(persistentParameters);
-		this.outputCookies = new ArrayList<RCCookie>();
+		this.persistentParameters = persistentParameters;
+		this.outputCookies = new ArrayList<RequestContext.RCCookie>(outputCookies);
+		this.SID=SID;
 	}
-
+	
 	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
-			Map<String, String> persistentParameters, List<RCCookie> outputCookies, Long contentLenght) {
-		this(outputStream, parameters, persistentParameters, outputCookies);
-		this.contentLength = contentLenght;
+			Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
+		this(outputStream,parameters,persistentParameters,outputCookies,null);
 	}
 
 	/**
@@ -99,6 +94,7 @@ public class RequestContext {
 	public String getParameter(String name) {
 		return parameters.get(name);
 	}
+
 
 	/**
 	 * method that retrieves names of all parameters in parameters map (note, this
@@ -175,7 +171,7 @@ public class RequestContext {
 	 * @return
 	 */
 	public String getSessionID() {
-		return new String();
+		return SID;
 	}
 	
 	/**
@@ -293,38 +289,14 @@ public class RequestContext {
 			sb.append(cookie.maxAge);
 			sb.append("; ");
 		}
+		if(cookie.isFinal) {
+			sb.append("HttpOnly  ");
+		}
 
 		return sb.toString().substring(0, sb.length() - 2);
 	}
 
-	public void DOSTUFF() {
-
-	}
-
-	public static class RCCookie {
-		public final String name;
-		public final String value;
-		public final String domain;
-		public final String path;
-		public final Integer maxAge;
-
-		/**
-		 * @param name
-		 * @param value
-		 * @param domain
-		 * @param path
-		 * @param maxAge
-		 */
-		public RCCookie(String name, String value, Integer maxAge, String domain, String path) {
-			super();
-			this.name = name;
-			this.value = value;
-			this.domain = domain;
-			this.path = path;
-			this.maxAge = maxAge;
-		}
-
-	}
+	
 
 	public void setEncoding(String encoding) {
 		if (headerGenerated)
@@ -354,6 +326,36 @@ public class RequestContext {
 		if (headerGenerated)
 			throw new RuntimeException("Headther already generated");
 		outputCookies.add(rcCookie);
+	}
+	
+	public static class RCCookie {
+		public final String name;
+		public final String value;
+		public final String domain;
+		public final String path;
+		public final Integer maxAge;
+		public boolean isFinal;
+
+		/**
+		 * @param name
+		 * @param value
+		 * @param domain
+		 * @param path
+		 * @param maxAge
+		 */
+		public RCCookie(String name, String value, Integer maxAge, String domain, String path) {
+			this.name = name;
+			this.value = value;
+			this.domain = domain;
+			this.path = path;
+			this.maxAge = maxAge;
+			isFinal=false;
+		}
+		
+		public void setFinal(boolean flag) {
+			this.isFinal=flag;
+		}
+
 	}
 
 }

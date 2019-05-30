@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -19,6 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,11 +42,14 @@ public class SmartHttpServer {
 	private ServerThread serverThread;
 	private ExecutorService threadPool;
 	private Path documentRoot;
+	private Map<String, SessionMapEntry> sessions;
+	private Random sessionRandom = new Random();
 
 	private Map<String, IWebWorker> workersMap;
 
 	public SmartHttpServer(String configFileName)
-			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
 		Properties serverProperties = new Properties();
 		Properties mimeProperties = new Properties();
@@ -66,10 +74,12 @@ public class SmartHttpServer {
 		workersMap = new HashMap<String, IWebWorker>();
 		for (var path : workersProperties.stringPropertyNames()) {
 			Class<?> referenceToClass = this.getClass().getClassLoader().loadClass(workersProperties.getProperty(path));
-			Object newObject = referenceToClass.newInstance();
+			Object newObject = referenceToClass.getDeclaredConstructor().newInstance();
 			workersMap.put(path, (IWebWorker) newObject);
 		}
 
+		sessions = new HashMap<String, SmartHttpServer.SessionMapEntry>();
+		sessionRandom = new Random();
 	}
 
 	protected synchronized void start() {
@@ -83,7 +93,7 @@ public class SmartHttpServer {
 	protected synchronized void stop() {
 		serverThread.terminateThread();
 		serverThread.interrupt();
-		serverThread.stop();
+		// serverThread.stop();
 		threadPool.shutdown();
 	}
 
@@ -130,12 +140,31 @@ public class SmartHttpServer {
 		public ClientWorker(Socket csocket) {
 			super();
 			this.csocket = csocket;
+
+			Thread t = new Thread(() -> doAction());
+			t.start();
+
+		}
+
+		private void doAction() {
+			for (var s : sessions.values()) {
+				if (!stillValid(s.validUntil)) {
+					sessions.remove(s.sid);
+				}
+			}
+			try {
+				Thread.sleep(5 * 60 * 1000);
+			} catch (InterruptedException e) {
+				doAction();
+			}
+
 		}
 
 		@Override
 		public void run() {
 			try {
 				// initialisation of streams
+
 				istream = new PushbackInputStream(csocket.getInputStream());
 				ostream = new BufferedOutputStream(csocket.getOutputStream());
 
@@ -156,6 +185,9 @@ public class SmartHttpServer {
 					csocket.close();
 					return;
 				}
+
+				checkSession(headers);
+
 				// determine method
 				if (firstLine[0] == null) {
 					sendError(ostream, 400, "Method Not Allowed");
@@ -189,11 +221,6 @@ public class SmartHttpServer {
 					}
 				}
 
-//				 get path
-//				 if (firstLine[1] == null) { //needing no path is legit i suppose
-//				 sendError(ostream, 400, "HTTP Version Not Supported");
-//				 return;
-//				 }
 				String requestedPath = firstLine[1];
 				String requestedPathSplitted[] = requestedPath.split("\\?");
 
@@ -209,11 +236,65 @@ public class SmartHttpServer {
 					csocket.close();
 					return;
 				}
-				internalDispatchRequest(requestedFile.toString(), true);
+				internalDispatchRequest(requestedPathSplitted[0], true);
 
 			} catch (Exception e) {
-				e.printStackTrace();//
+				e.printStackTrace();
 			}
+		}
+
+		private void checkSession(List<String> headers) {
+
+			String currSid = null;
+			for (String line : headers) {
+				if (line.startsWith("Cookie:")) {
+					String[] cookies = line.substring(8).split(";");
+					for (String pair : cookies) {
+						String[] pairParsed = pair.split("=");
+						if (pairParsed[0].trim().equals("sid")) {
+							currSid = pairParsed[1].trim().substring(1);
+							currSid = currSid.substring(0, currSid.length() - 1);
+						}
+					}
+				}
+				if (line.startsWith("Host:")) {
+					host = line.substring(5).split(":")[0].trim();
+				}
+			}
+
+			SessionMapEntry s;
+			if ((s = sessions.get(currSid)) != null) {
+				if (s.host.equals(host)) {
+					if (stillValid(s.validUntil)) {
+						s.validUntil = System.currentTimeMillis() / 1000 + sessionTimeout;
+						permPrams = s.map;
+						return;
+					} else {
+						sessions.remove(currSid);
+					}
+				}
+			}
+
+			SessionMapEntry sessionMapEntry = new SessionMapEntry(generateSid(20), host,
+					System.currentTimeMillis() / 1000 + sessionTimeout);
+
+			RCCookie rcCookie = new RCCookie("sid", sessionMapEntry.sid, null, host, "/");
+			rcCookie.setFinal(true);
+			permPrams = sessionMapEntry.map;
+			outputCookies.add(rcCookie);
+			sessions.put(sessionMapEntry.sid, sessionMapEntry);
+		}
+
+		private boolean stillValid(long validUntil) {
+			return System.currentTimeMillis() / 1000 < validUntil;
+		}
+
+		private synchronized String generateSid(int len) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < len; i++) {
+				sb.append((char) ('A' + (Math.abs(sessionRandom.nextInt()) % 26)));
+			}
+			return sb.toString();
 		}
 
 		private boolean parseParameters(String string) {
@@ -230,40 +311,48 @@ public class SmartHttpServer {
 
 		public void internalDispatchRequest(String urlPath, boolean directCall) throws Exception {
 
-
-			if (context == null) {
-				context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
+			if (directCall == true && (urlPath.startsWith("/private/") || urlPath.equals("/private"))) {
+				sendError(ostream, 404, "File not found");
+				csocket.close();
+				return;
 			}
 
-			if (!Paths.get(urlPath).normalize().startsWith(documentRoot)) {
+			if (context == null) {
+				context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this, SID);
+			}
+
+			Path requestedFile = documentRoot.resolve(urlPath.substring(1));
+			if (!requestedFile.normalize().startsWith(documentRoot)) {
 				sendError(ostream, 403, "Forbidden");
 				csocket.close();
 				return;
 			}
 
-			if (urlPath.split("\\?")[0].split("ext").length == 2) {
-				String[] niz = urlPath.split("\\?");
-				String[] niz2 = niz[0].split("ext");
+			if (urlPath.startsWith("/ext")) {
+				String[] niz = urlPath.split("/");
 
-				String wanted = niz2[niz2.length - 1].substring(1);
+				String wanted = niz[2];
 
-				for (var path : workersMap.keySet()) {
-					String[] lol=workersMap.get(path).getClass().getName().split("\\.");
-					if (wanted.equals(lol[lol.length-1])) {
-						workersMap.get(path).processRequest(context);
-						ostream.flush();
-						csocket.close();
-						return;
-					}
-				}
+				Class<?> referenceToClass = this.getClass().getClassLoader()
+						.loadClass("hr.fer.zemris.java.webserver.workers." + wanted);
+				IWebWorker newObject = (IWebWorker) referenceToClass.getDeclaredConstructor().newInstance();
+
+				newObject.processRequest(context);
+				ostream.flush();
+				csocket.close();
 				return;
 			}
-			
 
-			if (!Files.isReadable(Paths.get(urlPath))) {
+			if (workersMap.containsKey(urlPath)) {
+				workersMap.get(urlPath).processRequest(context);
+				ostream.flush();
+				csocket.close();
+				return;
+			}
+
+			if (!Files.isReadable(requestedFile)) {
 				sendError(ostream, 404, "File not found");
 				csocket.close();
-				
 				return;
 			}
 
@@ -271,21 +360,21 @@ public class SmartHttpServer {
 			context.setStatusText("200");
 
 			if (urlPath.endsWith(".smscr")) {
-				byte[] bytes = Files.readAllBytes(Paths.get(urlPath));
+				byte[] bytes = Files.readAllBytes(requestedFile);
 				String text = new String(bytes);
 				SmartScriptEngine sse = new SmartScriptEngine((new SmartScriptParser(text)).getDocumentNode(), context);
 				sse.execute();
 
 				ostream.flush();
 				ostream.close();
-
+				csocket.close();
 				return;
 			}
 
 			// serveFile(ostream, requestedFile);
-			Long contentLenght = Files.size(Paths.get(urlPath));
+			Long contentLenght = Files.size(requestedFile);
 			context.setContentLength(contentLenght);
-			context.write(Files.readAllBytes(Paths.get(urlPath)));
+			context.write(Files.readAllBytes(requestedFile));
 
 			ostream.flush();
 			csocket.close();
@@ -385,9 +474,32 @@ public class SmartHttpServer {
 	}
 
 	public static void main(String[] args)
-			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+
 		new SmartHttpServer(args[0]).start();
 		;
+	}
+
+	private static class SessionMapEntry {
+		String sid;
+		String host;
+		long validUntil;
+		Map<String, String> map;
+
+		/**
+		 * @param sid
+		 * @param host
+		 * @param validUntil
+		 * @param map
+		 */
+		public SessionMapEntry(String sid, String host, long validUntil) {
+			super();
+			this.sid = sid;
+			this.host = host;
+			this.validUntil = validUntil;
+			this.map = new ConcurrentHashMap<String, String>();
+		}
 	}
 
 }

@@ -1,0 +1,20 @@
+{$= "text/html" @setMimeType $}
+
+<html>
+	<head>
+		<title>Color notification</title>
+		
+		<style>
+			body {background-color: {$= "bgcolor" "7F7F7F" @pparamGet $};}
+		</style>
+	</head>
+ 
+	<body>
+		{$= "message" "Bad Request" @pparamGet $}<br>
+		<a href="/index2.html">Back To HomePage</a><br>
+	</body>
+	
+	
+	
+
+</html>
