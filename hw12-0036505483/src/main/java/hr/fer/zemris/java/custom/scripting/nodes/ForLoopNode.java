@@ -115,8 +115,6 @@ public class ForLoopNode extends Node {
 		}
 		sb.append("$}");
 		
-		
-		
 		for(int i=0;i<numberOfChildren();i++) {
 			sb.append(super.getChild(i).toString());
 		}

@@ -10,9 +10,11 @@
 	</head>
  
 	<body>
+	
+	<h2>List of scripts and workers</h2>
+	
 		<a href="scripts/osnovni.smscr">osnovni.smscr</a><br>
 		<a href="scripts/brojPoziva.smscr">brojPoziva.smscr</a><br>
-		<a href="scripts/fibonaccih.smscr">fibonaccih.smscr</a><br>
 		<a href="scripts/fibonaccih.smscr">fibonaccih.smscr</a><br>
 		<a href="/ext/HelloWorker">HelloWorker</a><br>
 		<a href="/ext/CircleWorker">CircleWorker</a><br>
@@ -20,7 +22,7 @@
 		
 		
 		<br>
-		Enter two numbers, calculates sum.
+		<h2>Enter two numbers, calculates sum.</h2>
 		<br>
 		
 		<form action="/calc" method="get" target="_blank">
@@ -30,9 +32,10 @@
 		</form>
 		
 		<br>
-		Color selector list
+		<h2>Color selector list</h2>
 		<br>
 		
+		<form action="/setbgcolor" method="get" id="dropDownColor">
 			<select name="bgcolor" form="dropDownColor">
 				<option value="ff0000">Red</option>
 				<option value="000099">Blue</option>
@@ -44,7 +47,6 @@
 				<option value="00ffcc">Cyan</option>
 				<option value="660066">Purple</option>
 			</select>
-		<form action="/setbgcolor" method="get" id="dropDownColor">
 			<input type="submit" value="Submit">
 		</form>
 			

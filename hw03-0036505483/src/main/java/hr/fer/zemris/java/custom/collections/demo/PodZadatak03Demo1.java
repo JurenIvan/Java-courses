@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.custom.collections.demo;
 
-import java.util.ConcurrentModificationException;
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.Collection;
 import hr.fer.zemris.java.custom.collections.ElementsGetter;

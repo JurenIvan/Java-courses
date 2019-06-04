@@ -10,7 +10,7 @@
 	</head>
  
 	<body>
-		{$= "message" "Bad Request" @pparamGet $}<br>
+		{$= "message" "Bad Request" @tparamGet $}<br>
 		<a href="/index2.html">Back To HomePage</a><br>
 	</body>
 	

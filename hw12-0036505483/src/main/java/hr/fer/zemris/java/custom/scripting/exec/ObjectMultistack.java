@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * bjectMultistack class is kind of a map that allows the user to store multiple
+ * ObjectMultistack class is kind of a map that allows the user to store multiple
  * values for same key and it provides a stack-like abstraction . Keys for
  * ObjectMultistack shall be instances of the class String. Values that will be
  * associated with those keys will be instances of class ValueWrapper

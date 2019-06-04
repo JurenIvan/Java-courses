@@ -1,8 +1,5 @@
 package hr.fer.zemris.java.custom.collections;
 
-import java.util.ConcurrentModificationException;
-import java.util.NoSuchElementException;
-
 public interface ElementsGetter {
 	/**
 	 * Method that returns boolean representing availability of nextElement. Should

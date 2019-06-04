@@ -1,9 +1,20 @@
 package hr.fer.zemris.java.webserver.workers;
 
+import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
+/**
+ * Implementation of {@link IWebWorker} that is responsible for page that will
+ * print parameters that user gave as part of url
+ * 
+ * @author juren
+ *
+ */
 public class EchoParams implements IWebWorker {
 
+	/**
+	 * String that holds instructions responsible for table drawing
+	 */
 	private final String DEFAULT_STYLE = "<style>\r\n" + "table {\r\n" + "  width:100%;\r\n" + "}\r\n"
 			+ "table, th, td {\r\n" + "  border: 1px solid black;\r\n" + "  border-collapse: collapse;\r\n" + "}\r\n"
 			+ "th, td {\r\n" + "  padding: 15px;\r\n" + "  text-align: left;\r\n" + "}\r\n"

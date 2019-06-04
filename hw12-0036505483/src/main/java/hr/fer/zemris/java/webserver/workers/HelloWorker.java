@@ -4,9 +4,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
-import hr.fer.zemris.java.webserver.workers.IWebWorker;
 
+/**
+ * Implementation of {@link IWebWorker} that is responsible for page that will
+ * greet user and print how much letters has its name if such is provided
+ * 
+ * @author juren
+ *
+ */
 public class HelloWorker implements IWebWorker {
 	@Override
 	public void processRequest(RequestContext context) {

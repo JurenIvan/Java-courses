@@ -1,37 +1,45 @@
 package hr.fer.zemris.java.webserver.workers;
 
+import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
+/**
+ * Implementation of {@link IWebWorker} that is responsible for page that will
+ * add 2 numbers provided as parameters though url
+ * 
+ * @author juren
+ *
+ */
 public class SumWorker implements IWebWorker {
-
+	/**
+	 * Constant that holds relative path to image shown when result is even
+	 */
 	private final String NAME_OF_FIRST_IMAGE = "\\images\\winBackground.jpg";
+	/**
+	 * Constant that holds relative path to image shown when result is odd
+	 */
 	private final String NAME_OF_SECOND_IMAGE = "\\images\\gr8.gif";
 
 	@Override
 	public void processRequest(RequestContext context) throws Exception {
-		String[] vars = new String[2];
-		int[] params = new int[2];
-		int count = 0;
-
-		for (String entry : context.getParameterNames()) {
-			vars[count] = entry;
-			try {
-				params[count] = Integer.parseInt(context.getParameter(entry));
-			} catch (NumberFormatException e) {
-				params[count] = count + 1;
-			} finally {
-				count++;
-			}
+		int a = 1;
+		int b = 2;
+		try {
+			a = Integer.parseInt(context.getParameter("a"));
+		} catch (NumberFormatException e) {
+		}
+		try {
+			b = Integer.parseInt(context.getParameter("b"));
+		} catch (NumberFormatException e) {
 		}
 
-		context.setTemporaryParameter("varA", String.valueOf(params[0]));
-		context.setTemporaryParameter("nameA", vars[0]);
-		context.setTemporaryParameter("varB", String.valueOf(params[1]));
-		context.setTemporaryParameter("nameB", vars[1]);
-		context.setTemporaryParameter("zbroj", String.valueOf(params[1] + params[0]));
-		context.setTemporaryParameter("nameZbroj", vars[0] +"+"+ vars[1]);
-		context.setTemporaryParameter("imgName",
-				(params[1] + params[0]) % 2 == 0 ? NAME_OF_FIRST_IMAGE : NAME_OF_SECOND_IMAGE);
+		context.setTemporaryParameter("varA", String.valueOf(a));
+		context.setTemporaryParameter("nameA", "a");
+		context.setTemporaryParameter("varB", String.valueOf(b));
+		context.setTemporaryParameter("nameB", "b");
+		context.setTemporaryParameter("zbroj", String.valueOf(a + b));
+		context.setTemporaryParameter("nameZbroj", "a+b");
+		context.setTemporaryParameter("imgName", (a + b) % 2 == 0 ? NAME_OF_FIRST_IMAGE : NAME_OF_SECOND_IMAGE);
 
 		context.getDispatcher().dispatchRequest("\\private\\pages\\calc.smscr");
 	}

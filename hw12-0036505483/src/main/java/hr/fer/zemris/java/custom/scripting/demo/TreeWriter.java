@@ -77,8 +77,24 @@ public class TreeWriter {
 		System.out.println(visitorCheck.getText().equals(visitor.getText()));
 	}
 
+	/**
+	 * Class containing implementation of {@link INodeVisitor} that is responsible
+	 * for walking the parsed document tree and printing parsed document.
+	 * 
+	 * @author juren
+	 *
+	 */
 	private static class WriterVisitor implements INodeVisitor {
 
+		// i did NOT follow instructions to make checking if Writer is capable of
+		// re-parsing parsed document easier. Writer visitor saves text that it should
+		// have printed in finalText variable.
+
+		// to if you want to make this writer do exactly as provided in homework,
+		// uncomment all commented syso-s...
+		/**
+		 * Variable used for storing final text.
+		 */
 		private String finalText;
 
 		public WriterVisitor() {
@@ -89,10 +105,7 @@ public class TreeWriter {
 		public void visitDocumentNode(DocumentNode node) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < node.numberOfChildren(); i++) {
-
-				WriterVisitor vn = new WriterVisitor();
 				node.getChild(i).accept(this);
-				sb.append(vn.getText());
 			}
 			finalText += sb.toString();
 		}
@@ -101,13 +114,12 @@ public class TreeWriter {
 		public void visitEchoNode(EchoNode node) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{$= ");
-
 			for (var elem : node.getElements()) {
 				sb.append(elem.toString());
 				sb.append(" ");
 			}
 			sb.append("$}");
-
+			// System.out.println(sb.toString());
 			finalText = finalText + sb.toString();
 		}
 
@@ -118,10 +130,10 @@ public class TreeWriter {
 
 			sb.append(node.getVariable().toString());
 			sb.append(" ");
-
+			
 			sb.append(node.getStartExpression().toString());
 			sb.append(" ");
-
+			
 			sb.append(node.getEndExpression().toString());
 			sb.append(" ");
 
@@ -129,21 +141,27 @@ public class TreeWriter {
 				sb.append(node.getStepExpression().toString());
 			}
 			sb.append("$}");
-			for (int i = 0; i < node.numberOfChildren(); i++) {
-				WriterVisitor vn = new WriterVisitor();
-				node.getChild(i).accept(vn);
-				sb.append(vn.getText());
-			}
-
-			sb.append("{$END$}");
 			finalText = finalText + sb.toString();
+			
+			for (int i = 0; i < node.numberOfChildren(); i++) {
+				node.getChild(i).accept(this);
+			}
+			// System.out.println(sb.toString());
+			finalText = finalText + "{$END$}";
 		}
 
 		@Override
 		public void visitTextNode(TextNode textNode) {
+			// System.out.println(textNode.getText());
 			finalText += textNode.getText();
 		}
 
+		/**
+		 * Getter for text collected by treeWisitor. Outputing this will result in
+		 * printing parsed document.
+		 * 
+		 * @return Text for output
+		 */
 		public String getText() {
 			return finalText;
 		}

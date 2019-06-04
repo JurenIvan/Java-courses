@@ -539,6 +539,9 @@ public class JNotepadPP extends JFrame {
 		tb.add(makeButtonWithActionAndIcons(cut, getIconNamed("cut.png"), null));
 		tb.add(makeButtonWithActionAndIcons(paste, getIconNamed("paste.png"), null));
 		tb.add(makeButtonWithActionAndIcons(statistics, getIconNamed("statistics.png"), null));
+		tb.add(new JButton(exitAplication));
+		tb.add(new JButton(saveDocument));
+		
 
 		cp.add(tb, BorderLayout.PAGE_START);
 	}

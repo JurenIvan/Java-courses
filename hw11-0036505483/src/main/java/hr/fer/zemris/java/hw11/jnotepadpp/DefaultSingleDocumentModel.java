@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
+import java.awt.Color;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Objects;
@@ -50,6 +51,8 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 		this.jta = jta;
 		this.modified = false;
 		this.path = path;
+		jta.setForeground(Color.GREEN);
+		jta.setBackground(Color.BLACK);
 
 		jta.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -86,6 +89,7 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 	@Override
 	public void setFilePath(Path path) {
 		Objects.requireNonNull(path, "Path must be provided.");
+		
 		this.path = path;
 		notifyFilePathUpdatedListeners();
 	}
