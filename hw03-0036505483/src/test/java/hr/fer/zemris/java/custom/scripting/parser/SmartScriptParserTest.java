@@ -18,22 +18,22 @@ class SmartScriptParserTest {
 	@Test
 	void forTestFailsTooLittleArguments() {
 		assertThrows(SmartScriptParserException.class, () -> {
-	//		SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 $}{$END$}");
+			SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 $}{$END$}");
 		});
 	}
 
 	@Test
 	void forTestFailsNotClosed() {
 		assertThrows(SmartScriptParserException.class, () -> {
-	//		SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 \"hmm\"  asd $}");
+			SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 \"hmm\"  asd $}");
 		});
 	}
 
 	@Test
 	void numberOfChildrenTest() {
-		SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 last_year$}{$END$}\r\n"
+		SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 last_year $}{$END$}\r\n"
 				+ "{$ FOR year \"1\" last_year $}{$END$}\r\n" + "{$ FOR year 1 \"\\\\  \"  asd $}{$END$}\r\n"
-				+ "{$ FOR year 1 \"\\\\ marko \"  asd$}{$END$}\r\n" + "{$ FOR year 1 \"\\\\  \"  asd$}{$END$}");
+				+ "{$ FOR year 1 \"\\\\ marko \"  asd$}{$END$}\r\n" + "{$ FOR year 1 \"\\\\  \"  asd $}{$END$}");
 		assertTrue(parser.getDocumentNode().numberOfChildren() == 9); // because of textNodes created for \r\n
 
 	}

@@ -25,7 +25,13 @@ import org.jfree.data.general.DefaultPieDataset;
 public class ReportImageServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * default width of chart
+	 */
 	private static final int DEFAULT_WIDTH = 600;
+	/**
+	 * default height of chart
+	 */
 	private static final int DEFAULT_HEIGHT = 400;
 
 	@Override
@@ -33,11 +39,10 @@ public class ReportImageServlet extends HttpServlet {
 		resp.setContentType("image/png");
 		resp.getOutputStream()
 				.write(ChartUtils.encodeAsPNG(getChart().createBufferedImage(DEFAULT_WIDTH, DEFAULT_HEIGHT)));
-		resp.getOutputStream().flush();
 	}
 
 	/**
-	 * method that returns {@link JFreeChart} with some data.
+	 * Method that returns {@link JFreeChart} with some random data.
 	 * 
 	 * @return {@link JFreeChart} with non-sense data
 	 */

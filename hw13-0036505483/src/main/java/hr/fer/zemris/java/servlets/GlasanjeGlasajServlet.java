@@ -26,10 +26,6 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
-		if (!Files.exists(Paths.get(fileName))) {
-			Files.createFile(Paths.get(fileName));
-		}
-
 		List<Record> records = Record.loader(req);
 
 		String id = req.getParameter("id");
@@ -49,8 +45,11 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 	private static void addOne(List<Record> records, String id) {
 		Objects.requireNonNull(records, "Must provide a list");
 		Objects.requireNonNull(id, "Must provide a id");
-
-		Record r = records.get(Record.findIndexOf(id, records));
+		int index=Record.findIndexOf(id, records);
+		if(index==-1) {
+			return;
+		}
+		Record r = records.get(index);
 		r.setVotes(r.getVotes() + 1);
 	}
 

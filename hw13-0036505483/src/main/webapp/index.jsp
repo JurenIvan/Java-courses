@@ -14,9 +14,9 @@
 <body>
 	<a href="colors.jsp">Background color chooser</a>
 	
-	<br>
-	<br>
-	<br>
+	<br><br><br>
+	<a href="trigonometric?a=0&b=90">Angles 0-90</a>
+	
 	<br>
 
 	<form action="trigonometric" method="GET">
@@ -29,7 +29,7 @@
 	</form>
 	<br><br><br>
 	
-	<a href="funny.jsp">Funny story</a>
+	<a href="stories\funny.jsp">Funny story</a>
 	<br><br><br>
 	
 	<a href="report.jsp">Report</a>

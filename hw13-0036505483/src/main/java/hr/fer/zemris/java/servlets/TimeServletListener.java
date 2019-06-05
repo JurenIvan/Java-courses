@@ -6,7 +6,7 @@ import javax.servlet.annotation.WebListener;
 
 /**
  * Class that models a servlet used for storing number of mili-seconds passed
- * until server started
+ * until server started.
  * 
  * @author juren
  *

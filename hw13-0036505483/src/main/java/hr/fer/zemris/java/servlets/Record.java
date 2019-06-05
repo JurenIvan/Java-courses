@@ -177,14 +177,17 @@ public class Record {
 	 * @throws IOException if files can not be found
 	 */
 	protected static List<Record> loader(HttpServletRequest req) throws IOException {
-		String fileNameDefinition = req.getServletContext().getRealPath("/WEB-INF/glasanje-definicija.txt");
+		String fileNameDefinition = req.getServletContext().getRealPath("\\WEB-INF\\glasanje-definicija.txt");
 		String fileNameResults = req.getServletContext().getRealPath("\\WEB-INF\\glasanje-rezultati.txt");
+		
 		if (!Files.exists(Paths.get(fileNameDefinition))) {
 			Files.createFile(Paths.get(fileNameDefinition));
 		}
+		
 		if (!Files.exists(Paths.get(fileNameResults))) {
 			Files.createFile(Paths.get(fileNameResults));
 		}
+		
 		List<Record> definition = Files.readAllLines(Paths.get(fileNameDefinition)).stream()
 				.map((t) -> Record.makeRecord(t)).collect(Collectors.toList());
 
@@ -197,6 +200,8 @@ public class Record {
 				definition.get(index).setVotes(Integer.parseInt(e[1]));
 			}
 		}
+
+		definition.sort((f, s) -> f.getId().compareTo(s.getId()));
 		return definition;
 	}
 

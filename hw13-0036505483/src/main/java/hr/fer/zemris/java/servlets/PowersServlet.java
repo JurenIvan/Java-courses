@@ -37,16 +37,16 @@ public class PowersServlet extends HttpServlet {
 			if (Math.abs(a) > 100)
 				throw new NumberFormatException();
 		} catch (NumberFormatException e) {
-			errorOccured("number a", req, resp);
+			errorOccured("Parameter a is not valid, it should be between -100 and 100", req, resp);
 			return;
 		}
 
 		try {
 			b = Integer.parseInt(bString);
-			if (Math.abs(b) > 100)
+			if (Math.abs(b) > 100 || b < a)
 				throw new NumberFormatException();
 		} catch (NumberFormatException e) {
-			errorOccured("number b", req, resp);
+			errorOccured("Parameter b is not valid, it should be between -100 and 100 and greater than a", req, resp);
 			return;
 		}
 
@@ -55,7 +55,7 @@ public class PowersServlet extends HttpServlet {
 			if (n > 5 || n < 1)
 				throw new NumberFormatException();
 		} catch (NumberFormatException e) {
-			errorOccured("number", req, resp);
+			errorOccured("Parameter n is not valid, it should be between 1 and 5", req, resp);
 			return;
 		}
 

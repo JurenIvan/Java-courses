@@ -170,7 +170,13 @@ public class SmartScriptParser {
 			expressions[2] = getAppropriateForFor();
 		} else {
 			expressions[2] = null;
+			return new ForLoopNode(variable, expressions[0], expressions[1], expressions[2]);
 		}
+		lexer.nextToken();
+		if(!isClosingTag()) {
+			throw new SmartScriptParserException("Too much arguments in for tag");
+		}
+		
 		return new ForLoopNode(variable, expressions[0], expressions[1], expressions[2]);
 	}
 

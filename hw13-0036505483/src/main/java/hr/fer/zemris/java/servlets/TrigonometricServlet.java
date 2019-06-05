@@ -37,7 +37,7 @@ public class TrigonometricServlet extends HttpServlet {
 			bValue = temp;
 		}
 		if (bValue > aValue + 720) {
-			b = a + 720;
+			bValue = aValue + 720;
 		}
 
 		String sin[] = new String[bValue - aValue + 1];

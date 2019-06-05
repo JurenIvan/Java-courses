@@ -2,7 +2,6 @@ package hr.fer.zemris.java.custom.scripting.exec;
 
 import java.util.function.BiFunction;
 
-//with no javadoc, body of class, with all proper formating, is under 80 lines long
 /**
  * Class that models a custom Value wrapper. Any dataType can be stored in this
  * structure and arithmetic operations are allowed and defined when those types

@@ -225,6 +225,16 @@ public class SmartLexer {
 					sb.append('\"');
 					continue;
 				}
+				if(data[currentIndex]== 'n') {
+					currentIndex++;
+					sb.append('\n');
+					continue;
+				}
+				if(data[currentIndex]== 'r') {
+					currentIndex++;
+					sb.append('\r');
+					continue;
+				}
 			}
 			
 				sb.append(c);

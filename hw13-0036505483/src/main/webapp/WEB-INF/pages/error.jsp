@@ -11,7 +11,7 @@
 </head>
 
 <body>
-	<h1>Failed because of illegal ${errorReasone} provided.</h1>>
+	<h1>${errorReasone} </h1>>
 </body>
 
 </html>

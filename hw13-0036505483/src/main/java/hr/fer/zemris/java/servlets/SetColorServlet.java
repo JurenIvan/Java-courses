@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Class that models a servlet used for preparing data(color) for index.jsp.
+ * Default color is white. If illegal hex code gets sent, color will be set to
+ * white.
  * 
  * @author juren
  *
