@@ -4,6 +4,13 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+/**
+ * Class that models a servlet used for storing number of mili-seconds passed
+ * until server started
+ * 
+ * @author juren
+ *
+ */
 @WebListener
 public class TimeServletListener implements ServletContextListener {
 

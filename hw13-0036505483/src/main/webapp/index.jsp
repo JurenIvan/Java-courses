@@ -27,22 +27,22 @@
 		<input type="submit" value="Tabeliraj"><input type="reset"
 			value="Reset">
 	</form>
-	<br><br><br><br>
+	<br><br><br>
 	
 	<a href="funny.jsp">Funny story</a>
-	<br><br><br><br>
+	<br><br><br>
 	
 	<a href="report.jsp">Report</a>
-	<br><br><br><br>
+	<br><br><br>
 	
 	<a href="powers?a=1&b=100&n=3">Powers</a>
-	<br><br><br><br>
+	<br><br><br>
 	
 	<a href="appinfo.jsp">App info</a>
-	<br><br><br><br>
+	<br><br><br>
 	
 	<a href="glasanje">Glasanje</a>
-	<br><br><br><br>
+	<br><br><br>
 	
 	
 </body>

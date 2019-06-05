@@ -13,6 +13,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+/**
+ * Class that models a servlet used for creating excell file that has n pages,
+ * and on each page there are n-th powers of numbers between a and b, where n,a
+ * and b are integers that are send through parameters. a and b must be between
+ * -100 and 100, and n has to be positive integer smaller than 5
+ * 
+ * @author juren
+ *
+ */
 @WebServlet(urlPatterns = { "/powers" })
 public class PowersServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -54,6 +63,15 @@ public class PowersServlet extends HttpServlet {
 		table(a, b, n).write(resp.getOutputStream());
 	}
 
+	/**
+	 * Method that creates excell table described in {@link PowersServlet} class
+	 * javadoc
+	 * 
+	 * @param a lower boundary of interval that is calculated
+	 * @param b upper boundary of interval that is calculated
+	 * @param n maximum power
+	 * @return
+	 */
 	private Workbook table(int a, int b, int n) {
 		Workbook hwb = new HSSFWorkbook();
 		for (int i = 1; i <= n; i++) {
@@ -67,6 +85,15 @@ public class PowersServlet extends HttpServlet {
 		return hwb;
 	}
 
+	/**
+	 * Method that redirects to error page displaying provided text
+	 * 
+	 * @param string message description of error
+	 * @param req    used to get path to error page
+	 * @param resp   used to send request
+	 * @throws ServletException this method is not supposed to handle them
+	 * @throws IOException      if error page can not be found
+	 */
 	private void errorOccured(String string, HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		req.setAttribute("errorReasone", string);

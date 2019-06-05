@@ -15,7 +15,13 @@ import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
-@WebServlet(urlPatterns = {"/reportImage"})
+/**
+ * Class that models a servlet used for creating a JFreeChart.
+ * 
+ * @author juren
+ *
+ */
+@WebServlet(urlPatterns = { "/reportImage" })
 public class ReportImageServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -25,12 +31,16 @@ public class ReportImageServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("image/png");
-		resp.setContentType("image/png");
-		resp.setContentType("image/png");
-		resp.getOutputStream().write(ChartUtils.encodeAsPNG(getChart().createBufferedImage(DEFAULT_WIDTH, DEFAULT_HEIGHT)));
+		resp.getOutputStream()
+				.write(ChartUtils.encodeAsPNG(getChart().createBufferedImage(DEFAULT_WIDTH, DEFAULT_HEIGHT)));
 		resp.getOutputStream().flush();
 	}
 
+	/**
+	 * method that returns {@link JFreeChart} with some data.
+	 * 
+	 * @return {@link JFreeChart} with non-sense data
+	 */
 	public JFreeChart getChart() {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		dataset.setValue("CPU", 11.1);

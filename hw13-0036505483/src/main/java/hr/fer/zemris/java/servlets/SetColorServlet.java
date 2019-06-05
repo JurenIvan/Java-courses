@@ -8,20 +8,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet (urlPatterns= {"/setcolor"})
-public class SetColorServlet extends HttpServlet{
+/**
+ * Class that models a servlet used for preparing data(color) for index.jsp.
+ * 
+ * @author juren
+ *
+ */
+@WebServlet(urlPatterns = { "/setcolor" })
+public class SetColorServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String color=req.getParameter("color");
-		
-		if(color==null) {
-			color="FFFFFF";
+		String color = req.getParameter("color");
+
+		if (color == null) {
+			color = "FFFFFF";
 		}
-		
+
 		req.getSession().setAttribute("pickedBgColor", color);
 		req.getRequestDispatcher("/index.jsp").forward(req, resp);
 	}
-	
+
 }
