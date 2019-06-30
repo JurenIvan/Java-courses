@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Gallery</title>
+		
+		<style>
+			
+			img {border: 1px solid #ddd; border-radius: 4px; padding: 5px;}
+			img:hover { box-shadow: 0 0 2px 1px rgba(0, 500, 500, 0.5);}
+		
+		 	h1 {font-style: italic;}
+		 	h1:HOVER {font-style: italic; color: red;}
+		  
+		 	#imeLabel { font-family: monospace; }
+		  		
+		 	.tagBox { margin-top: 10px; margin-left: 10px; width: 15%; height:30%; border: 1px solid #282828; display: inline-block;}
+		 	.tagText {padding-left: 5px; background-color: #282828; text-align: center; font-family: cursive; overflow: auto;  color: white;}	
+		 	.buttonBox {padding-right: 5px; padding-top: 5px; background-color: #787878; font-weight: bold; font-size: 0.7em; text-align: center; font-variant: small-caps;}
+		
+		</style>
+		
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="js/htmlescaping.js"></script>
+		
+		<script type="text/javascript"><!--
+
+		 $(document).ready( 
+			  function() {
+				  getTags()
+		  	  } 
+		  );
+		
+		function getFullPic(filename){
+			$.ajax(
+					  {
+						  url: "rest/gallery/getPicture/"+filename,
+						  data: {
+							  dummy: Math.random()
+						  },
+						  dataType: "json",
+						  success: function(data) {
+								var html = "";
+								html += "<img class='thumb' src='servleti/picture?filename=" + htmlEscape(data[0].fileName) + "' ; >";
+								html += "<br>Data for this pic;<br>";
+								html += "filename:";
+								html += data[0].fileName;
+								html += "<br>Name of picture:";
+								html += data[0].pictureTitle;
+								html += "<br> Tags:";
+								
+								for(var i=0;i<data[0].tags.length;i++){
+									html += " #" + data[0].tags[i];
+								}
+				
+								$("#picture").html(html);
+						  }
+					  }
+				);
+		}
+		
+		function selectCategory(tagToLoad){
+			$.ajax(
+					  {
+						  url: "rest/gallery/"+tagToLoad,
+						  data: {
+							  dummy: Math.random()
+						  },
+						  dataType: "json",
+						  success: function(data) {
+								var html = "Thumbnails for <strong> " + tagToLoad + " </strong> category<br>";
+								for(var i=0; i<data.length; i++) {
+									html += "<img onclick='getFullPic(\"" + htmlEscape(data[i].fileName) +"\")' class='thumb' src='servleti/picture?filename=" + htmlEscape(data[i].fileName) + "&thumbnail=true' >";
+								}
+								$("#thumbnails").html(html);
+						  }
+					  }
+				);
+		}
+		  
+		 function getTags() {
+				$.ajax(
+				  {
+					  url: "rest/gallery",
+					  data: {
+						  dummy: Math.random()
+					  },
+					  dataType: "json",
+					  success: function(data) {
+						  	var data2=data;
+							var html = "<p>Pick a category of pictures.</p>";
+							for(var i=0; i<data.length; i++) {
+								html += "<div class='tagBox'><div class='tagText'>"+htmlEscape(data[i])+"</div><div class='buttonBox'><button onclick='selectCategory(\"" + htmlEscape(data[i]) +"\")'>Click for This Category</button></div></div>";
+							}
+							
+							$("#category").html(html);
+					  }
+				  }
+				);
+			  }
+		    
+		//--></script>
+	</head>
+	<body>
+	
+		<h1>Gallery of best memes on the internet</h1>
+		
+		<div id="picture">&nbsp;</div>
+		<br>
+		<div id="thumbnails">&nbsp;</div>
+		<br>
+		<div id="category">&nbsp;</div>
+		
+		
+	</body>
+</html>

@@ -1,0 +1,10 @@
+11	The Beatles	https://www.youtube.com/watch?v=z9ypq6_5bsg	1
+22	The Platters	https://www.youtube.com/watch?v=H2di83WAOhU	1
+33	The Beach Boys	https://www.youtube.com/watch?v=2s4slliAtQU	1
+44	The Four Seasons	https://www.youtube.com/watch?v=y8yvnqHmFds	1
+55	The Marcels	https://www.youtube.com/watch?v=qoi3TH59ZEs	1
+66	The Everly Brothers	https://www.youtube.com/watch?v=tbU3zdAgiX8	1
+77	The Mamas And The Papas	https://www.youtube.com/watch?v=N-aK6JnyFmk	1
+1	Petar Graso	https://www.youtube.com/watch?v=j4ppyoZNt_Y	2
+2	Lidija Bacic	https://www.youtube.com/watch?v=LYad3EtQ6XY	2
+3	Jala Brat	https://www.youtube.com/watch?v=iyPgQN2wLjs	2
