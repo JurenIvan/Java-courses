@@ -16,6 +16,14 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+/**
+ * Class containing main method used to start the shell application which
+ * expects url to folder with multiple documents. After the app is started it
+ * has 4 commands :"query", "results", "type", "exit".
+ * 
+ * @author juren
+ *
+ */
 public class MyShell {
 
 	/**
@@ -71,9 +79,6 @@ public class MyShell {
 	 */
 	private static TreeMap<Double, String> results;
 
-	
-	
-	
 	/**
 	 * Method used to start program(shell).
 	 * 

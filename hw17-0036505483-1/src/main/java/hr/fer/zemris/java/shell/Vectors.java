@@ -9,23 +9,23 @@ package hr.fer.zemris.java.shell;
 public class Vectors {
 
 	/**
-	 * method that calculates cosine betwheen two vectors
+	 * method that calculates cosine between two vectors
 	 * 
 	 * @param first  vector
 	 * @param second vector
 	 * @return cosine value
 	 */
 	public static double cosBetweenVectors(double[] first, double[] second) {
-		return Vectors.scalarProduct(first, second) / (Vectors.lenght(first) * Vectors.lenght(second));
+		return Vectors.scalarProduct(first, second) / (Vectors.length(first) * Vectors.length(second));
 	}
 
 	/**
-	 * Method that returns lenght of vector
+	 * Method that returns length of vector
 	 * 
 	 * @param first vector
-	 * @return lenght
+	 * @return length
 	 */
-	private static double lenght(double[] first) {
+	private static double length(double[] first) {
 		double val = 0;
 		for (int i = 0; i < first.length; i++) {
 			val += first[i] * first[i];
@@ -34,7 +34,7 @@ public class Vectors {
 	}
 
 	/**
-	 * Method that retuns dot product of two vectors
+	 * Method that returns dot product of two vectors
 	 * 
 	 * @param first  vector
 	 * @param second vector
