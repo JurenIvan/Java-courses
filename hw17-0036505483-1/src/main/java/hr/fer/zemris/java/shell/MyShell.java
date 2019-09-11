@@ -26,6 +26,8 @@ import java.util.TreeMap;
  */
 public class MyShell {
 
+	private static final double VARIATION_FACTOR = 1.000000001;
+	private static final double MINIMUM_MATCH_NUMBER = 0.000001;
 	/**
 	 * Variable used to store default welcomeMessage
 	 */
@@ -360,7 +362,7 @@ public class MyShell {
 	 * it should be interpret as "house" and "doctor"
 	 * 
 	 * @param line String that is parsed
-	 * @return List of words parsed by rule stated abouve
+	 * @return List of words parsed by rule stated above
 	 */
 	private static List<String> parseLine(String line) {
 		List<String> words = new ArrayList<String>();
@@ -374,7 +376,6 @@ public class MyShell {
 				if (i >= line.length())
 					break;
 				currChar = line.charAt(i);
-
 			}
 			String word = sb.toString().toLowerCase().trim();
 			if (word.isBlank())
@@ -393,17 +394,17 @@ public class MyShell {
 	private static void printResults(int i) {
 		int counter = 0;
 		for (var entry : results.entrySet()) {
-			System.out.printf("[%2d] (%6.5f) %s %n", counter++, entry.getKey(), entry.getValue());
+			System.out.printf("[%2d] (%5.4f) %s %n", counter++, entry.getKey(), entry.getValue());
 			if (counter > i - 1)
 				break;
 		}
 	}
 
 	/**
-	 * Method that compares provided vector to all other vectors precomputed from
-	 * given folder
+	 * Method that compares provided vector to all other vectors pre-computed from
+	 * given folder.
 	 * 
-	 * @param tfidfForQuerry {@link #tfidf} for users querry
+	 * @param tfidfForQuerry {@link #tfidf} for users query
 	 * @return double representing match-value
 	 */
 	private static TreeMap<Double, String> compareToAll(double[] tfidfForQuerry) {
@@ -416,9 +417,9 @@ public class MyShell {
 			}
 
 			double matchingResult = Vectors.cosBetweenVectors(documentArray, tfidfForQuerry);
-			if (matchingResult > 0.00001) {
+			if (matchingResult > MINIMUM_MATCH_NUMBER) {
 				while (results.containsKey(matchingResult)) {
-					matchingResult = matchingResult * 1.000000001;
+					matchingResult = matchingResult * VARIATION_FACTOR;
 				}
 				results.put(matchingResult, filesList.get(noOfPath));
 			}
@@ -428,7 +429,7 @@ public class MyShell {
 
 	/**
 	 * Gets index of item stored in a array. Requires sorted list. Uses binary
-	 * seach. check {@link #Collections.binarySearch}
+	 * search. check {@link #Collections.binarySearch}
 	 * 
 	 * @param filesList SORTED list
 	 * @param key       of object that is searched for

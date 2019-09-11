@@ -47,6 +47,7 @@ import hr.fer.zemris.java.hw17.jvdraw.drawingModel.DrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.drawingModel.DrawingModelImpl;
 import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Circle;
+import hr.fer.zemris.java.hw17.jvdraw.shapes.FTriangle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.FilledCircle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Line;
@@ -58,30 +59,96 @@ import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectBBCalculator;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectOutputter;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectPainter;
 
+/**
+ * Main class that contains main method used for starting the application.
+ * Models JVDraw application. JVDraw application is app that enables user to
+ * draw, export images and import special kind of .jvd files that represent a
+ * drawing on canvas.
+ * 
+ * @author juren
+ *
+ */
 public class JVDraw extends JFrame {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constant for default window height
+	 */
+	private static final int DEFAULT_HEIGTH = 800;
+
+	/**
+	 * Constant for default window width
+	 */
+	private static final int DEFAULT_WIDTH = 800;
+
+	/**
+	 * Reference to {@link BottomStatusLabel} used for representation of current
+	 * color
+	 */
 	private BottomStatusLabel bsl;
+	/**
+	 * {@link IColorProvider} for foreground color
+	 */
 	private IColorProvider fgColorProvider;
+	/**
+	 * {@link IColorProvider} for background color
+	 */
 	private IColorProvider bgColorProvider;
+	/**
+	 * Reference to {@link DrawingModel} used to hold data
+	 */
 	private DrawingModel drawingModel;
+	/**
+	 * variable that stores reference to {@link JDrawingCanvas} where drawing is
+	 * created
+	 */
 	private JDrawingCanvas canvas;
+	/**
+	 * State that holds implementation of tool used at the moment
+	 */
 	private Tool currStateTool;
+	/**
+	 * {@link JList} of {@link GeometricalObject} that stores data about all
+	 * {@link GeometricalObject} on drawing
+	 */
 	private JList<GeometricalObject> rightList;
+	/**
+	 * Variable representing path to file where we store data.
+	 */
 	private Path filePath;
 
+	/**
+	 * Main method. Used to start the application. For more info check
+	 * {@link JVDraw}.
+	 * 
+	 * @param args not used.
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new JVDraw().setVisible(true));
 	}
 
+	/**
+	 * Standard constructor for swing applications. Initializes toolbars, listeners,
+	 * menus etc.
+	 */
 	public JVDraw() {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exitAction.actionPerformed(null);
+			}
+		});
 		initGUI();
-		setMinimumSize(new Dimension(600, 600));
+		setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGTH));
 		setLocationRelativeTo(null);
 
 	}
 
+	/**
+	 * Method that was created as a product of refactoring code. Has bundle of
+	 * bundles of functionalities that are similar to each other.
+	 */
 	private void initGUI() {
 		drawingModel = new DrawingModelImpl();
 
@@ -97,16 +164,14 @@ public class JVDraw extends JFrame {
 		bsl = new BottomStatusLabel(fgColorProvider, bgColorProvider);
 		cp.add(bsl, BorderLayout.PAGE_END);
 		bsl.newColorSelected(null, null, null);
-
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				exitAction.actionPerformed(null);
-			}
-		});
-
 	}
 
+	/**
+	 * Method that creates and initializes {@link DrawingObjectListModel} and tests
+	 * it up to the right side of the screen.
+	 * 
+	 * @param cp
+	 */
 	private void createGeometricalObjectsList(Container cp) {
 
 		rightList = new JList<>(new DrawingObjectListModel(drawingModel));
@@ -164,6 +229,11 @@ public class JVDraw extends JFrame {
 		rightList.addKeyListener(keyListener);
 	}
 
+	/**
+	 * Method that was created as a product of refactoring code. Has bundle of
+	 * bundles of functionalities that are similar to each other. this method
+	 * contains initialization of Toolbar section.
+	 */
 	private void createToolbar(Container cp) {
 		JToolBar tb = new JToolBar();
 
@@ -179,34 +249,49 @@ public class JVDraw extends JFrame {
 		JToggleButton line = new JToggleButton("Line");
 		JToggleButton circle = new JToggleButton("Circle");
 		JToggleButton fCircle = new JToggleButton("Filled Circle");
+		JToggleButton fTriangle = new JToggleButton("Filled Triangle");
 		line.setSelected(true);
 
 		group.add(line);
 		group.add(circle);
 		group.add(fCircle);
+		group.add(fTriangle);
 
 		tb.add(line);
 		tb.add(circle);
 		tb.add(fCircle);
+		tb.add(fTriangle);
 
 		Tool lineTool = new LineTools(fgColorProvider, drawingModel, canvas);
 		Tool circleTool = new CircleTools(fgColorProvider, drawingModel, canvas);
 		Tool fCircleTool = new FCircleTools(fgColorProvider, bgColorProvider, drawingModel, canvas);
+		Tool fTriangleTool = new FTriangleTool(fgColorProvider, bgColorProvider, drawingModel, canvas);
 
 		line.addActionListener((e) -> currStateTool = lineTool);
 		circle.addActionListener((e) -> currStateTool = circleTool);
 		fCircle.addActionListener((e) -> currStateTool = fCircleTool);
-
+		fTriangle.addActionListener((e) -> currStateTool = fTriangleTool);
+		
 		line.setSelected(true);
 		currStateTool = lineTool;
 		cp.add(tb, BorderLayout.PAGE_START);
 	}
 
+	/**
+	 * Method that was created as a product of refactoring code. Has bundle of
+	 * bundles of functionalities that are similar to each other. Makes instance of
+	 * {@link JDrawingCanvas} and links it with {@link DrawingModel}.
+	 */
 	private void createJCanvas(Container cp) {
 		canvas = new JDrawingCanvas(drawingModel, () -> currStateTool);
 		cp.add(canvas);
 	}
 
+	/**
+	 * Method that was created as a product of refactoring code. Has bundle of
+	 * bundles of functionalities that are similar to each other. Makes menu(s) and
+	 * MenuItems
+	 */
 	private void createMenus(Container cp) {
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
@@ -226,6 +311,9 @@ public class JVDraw extends JFrame {
 		file.add(exit);
 	}
 
+	/**
+	 * Action that is used when user wants to load .jvd file
+	 */
 	private final Action openAction = new AbstractAction("Open") {
 		private static final long serialVersionUID = 1L;
 
@@ -240,6 +328,12 @@ public class JVDraw extends JFrame {
 			loadFile(jfc.getSelectedFile().toPath());
 		}
 
+		/**
+		 * Method that loads file from given path, reads all lines, parses content and
+		 * adds to drawingModel all parsed {@link GeometricalObject}.
+		 * 
+		 * @param path of inputFile
+		 */
 		private void loadFile(Path path) {
 
 			if (!path.toString().endsWith(".jvd"))
@@ -257,6 +351,8 @@ public class JVDraw extends JFrame {
 						listOfParsedObjects.add(createCircleFromStringArray(splitted));
 					} else if (splitted[0].equals("FCIRCLE")) {
 						listOfParsedObjects.add(createFilledCircleFromStringArray(splitted));
+					} else if(splitted[0].equals("FTRIANGLE")) {
+						listOfParsedObjects.add(createFTriangleFromStringArray(splitted));
 					}
 				}
 
@@ -271,8 +367,27 @@ public class JVDraw extends JFrame {
 			return;
 		}
 
+		/**
+		 * Method that is used to get circle out of parsed string.
+		 * 
+		 * @param splitted array of tokens
+		 * @return Circle
+		 */
+		private FTriangle createFTriangleFromStringArray(String[] splitted) {
+			return new FTriangle(
+					new Color(Integer.parseInt(splitted[7]), Integer.parseInt(splitted[8]),Integer.parseInt(splitted[9])),
+					new Color(Integer.parseInt(splitted[10]), Integer.parseInt(splitted[11]),Integer.parseInt(splitted[12])),
+					
+					new Point(Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2])),
+					new Point(Integer.parseInt(splitted[3]),Integer.parseInt(splitted[4])),
+					new Point(Integer.parseInt(splitted[5]),Integer.parseInt(splitted[6]))
+					);
+		}
+		
+		
 		private FilledCircle createFilledCircleFromStringArray(String[] splitted) {
-			return new FilledCircle(new Point(Integer.parseInt(splitted[1]), (Integer.parseInt(splitted[2]))),
+			return new FilledCircle
+					(new Point(Integer.parseInt(splitted[1]), (Integer.parseInt(splitted[2]))),
 					new Point(Integer.parseInt(splitted[1]),
 							Integer.parseInt(splitted[2]) + Integer.parseInt(splitted[3])),
 					new Color(Integer.parseInt(splitted[4]), Integer.parseInt(splitted[5]),
@@ -281,6 +396,12 @@ public class JVDraw extends JFrame {
 							Integer.parseInt(splitted[9])));
 		}
 
+		/**
+		 * Method that is used to get line out of parsed string
+		 * 
+		 * @param splitted array of tokens
+		 * @return Circle
+		 */
 		private Line createLineFromStringArray(String[] splitted) {
 			return new Line(new Point(Integer.parseInt(splitted[1]), (Integer.parseInt(splitted[2]))),
 					new Point(Integer.parseInt(splitted[3]), (Integer.parseInt(splitted[4]))),
@@ -288,6 +409,12 @@ public class JVDraw extends JFrame {
 							Integer.parseInt(splitted[7])));
 		}
 
+		/**
+		 * Method that is used to get circle out of parsed string
+		 * 
+		 * @param splitted array of tokens
+		 * @return Circle
+		 */
 		private Circle createCircleFromStringArray(String[] splitted) {
 			return new Circle(new Point(Integer.parseInt(splitted[1]), (Integer.parseInt(splitted[2]))),
 					new Point(Integer.parseInt(splitted[1]),
@@ -298,6 +425,11 @@ public class JVDraw extends JFrame {
 
 	};
 
+	/**
+	 * Action that is used when user wants to save .jvd file. Requires no extra
+	 * input except for the first time. then it delegates the job to he
+	 * {@link SaveAsAction}
+	 */
 	private final Action saveAction = new AbstractAction("Save") {
 		private static final long serialVersionUID = 1L;
 
@@ -312,6 +444,11 @@ public class JVDraw extends JFrame {
 
 	};
 
+	/**
+	 * Helper method that writes data to provided path
+	 * 
+	 * @param filePath
+	 */
 	private void saveAsText(Path filePath) {
 		GeometricalObjectOutputter goop = new GeometricalObjectOutputter();
 		for (int i = 0; i < drawingModel.getSize(); i++) {
@@ -328,6 +465,10 @@ public class JVDraw extends JFrame {
 		drawingModel.clearModifiedFlag();
 	}
 
+	/**
+	 * Action that is used when user wants to save .jvd file with option to change
+	 * it's nameF
+	 */
 	private final Action saveAsAction = new AbstractAction("Save as") {
 		private static final long serialVersionUID = 1L;
 
@@ -348,6 +489,10 @@ public class JVDraw extends JFrame {
 		}
 	};
 
+	/**
+	 * Action that is used when user wants to exit {@link JVDraw}. if unsaved data
+	 * is present, user decides whether he wants to save or discard changes
+	 */
 	private final Action exitAction = new AbstractAction("Exit") {
 		private static final long serialVersionUID = 1L;
 
@@ -372,6 +517,10 @@ public class JVDraw extends JFrame {
 
 	};
 
+	/**
+	 * Action that is used when user wants to export image to drive . User has 3
+	 * options, JPG, PNG i GIF
+	 */
 	private final Action exportAction = new AbstractAction("Export picture") {
 		private static final long serialVersionUID = 1L;
 
@@ -388,6 +537,7 @@ public class JVDraw extends JFrame {
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
+			
 			Path exportPath = Paths
 					.get(jfc.getSelectedFile().toPath().toString() + "." + determineFormat(formatNumber));
 
@@ -419,6 +569,13 @@ public class JVDraw extends JFrame {
 		}
 	};
 
+	/**
+	 * Method that returns String stored under certain number. Used to parse data
+	 * from input.
+	 * 
+	 * @param formatNumber ordinal number describing predefined picture formants
+	 * @return
+	 */
 	private String determineFormat(int formatNumber) {
 		if (formatNumber == 0)
 			return "JPG";

@@ -28,7 +28,7 @@ public class UniqueNumbers {
 	 * @author juren
 	 *
 	 */
-	public static class TreeNode {
+	public static class TreeNode {		
 		TreeNode left, right;
 		int value;
 	}

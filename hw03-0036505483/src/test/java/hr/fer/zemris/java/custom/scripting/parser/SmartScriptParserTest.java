@@ -18,14 +18,14 @@ class SmartScriptParserTest {
 	@Test
 	void forTestFailsTooLittleArguments() {
 		assertThrows(SmartScriptParserException.class, () -> {
-			SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 $}{$END$}");
+			new SmartScriptParser("{$ FOR year 1 $}{$END$}");
 		});
 	}
 
 	@Test
 	void forTestFailsNotClosed() {
 		assertThrows(SmartScriptParserException.class, () -> {
-			SmartScriptParser parser = new SmartScriptParser("{$ FOR year 1 \"hmm\"  asd $}");
+			 new SmartScriptParser("{$ FOR year 1 \"hmm\"  asd $}");
 		});
 	}
 

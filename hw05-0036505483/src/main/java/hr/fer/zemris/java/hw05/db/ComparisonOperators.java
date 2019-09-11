@@ -31,7 +31,7 @@ public class ComparisonOperators {
 	public static final IComparisonOperator LIKE;
 
 	static {
-		LESS = (value1, value2) -> value1.compareTo(value2) < 0 ? true : false;
+		LESS = (value1, value2) -> value1.compareTo(value2) < 0 ? true : false;			//bez ternarnog
 		LESS_OR_EQUALS = (value1, value2) -> value1.compareTo(value2) <= 0 ? true : false;
 		GREATER = (value1, value2) -> value1.compareTo(value2) > 0 ? true : false;
 		GREATER_OR_EQUALS = (value1, value2) -> value1.compareTo(value2) >= 0 ? true : false;

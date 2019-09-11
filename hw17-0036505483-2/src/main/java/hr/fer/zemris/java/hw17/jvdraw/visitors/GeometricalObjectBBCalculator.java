@@ -3,15 +3,36 @@ package hr.fer.zemris.java.hw17.jvdraw.visitors;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import hr.fer.zemris.java.hw17.jvdraw.JDrawingCanvas;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Circle;
+import hr.fer.zemris.java.hw17.jvdraw.shapes.FTriangle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.FilledCircle;
+import hr.fer.zemris.java.hw17.jvdraw.shapes.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Line;
 
+/**
+ * Class that is implementation of {@link GeometricalObjectVisitor} used to
+ * calculate bounds of Objects on {@link JDrawingCanvas}.
+ * 
+ * @author juren
+ *
+ */
 public class GeometricalObjectBBCalculator implements GeometricalObjectVisitor {
-
+	/**
+	 * variable that stores the most upper Left point
+	 */
 	private Point upperLeft;
+	/**
+	 * variable that stores the most lower right point
+	 */
 	private Point lowerRight;
 
+	/**
+	 * Method that returns {@link Rectangle} that is box around all
+	 * {@link GeometricalObject} that visitor visited so far.
+	 * 
+	 * @return
+	 */
 	public Rectangle getBoundingBox() {
 		return new Rectangle(upperLeft.x, upperLeft.y, lowerRight.x - upperLeft.x, lowerRight.y - upperLeft.y);
 	}
@@ -22,35 +43,35 @@ public class GeometricalObjectBBCalculator implements GeometricalObjectVisitor {
 			upperLeft = new Point(line.getStart());
 			lowerRight = new Point(line.getStart());
 		}
-		
+
 		if (upperLeft.x > line.getStart().x) {
 			upperLeft.x = line.getStart().x;
 		}
 		if (upperLeft.x > line.getEnd().x) {
 			upperLeft.x = line.getEnd().x;
 		}
-		
+
 		if (upperLeft.y > line.getStart().y) {
 			upperLeft.y = line.getStart().y;
 		}
 		if (upperLeft.y > line.getEnd().y) {
 			upperLeft.y = line.getEnd().y;
 		}
-		
+
 		if (lowerRight.x < line.getStart().x) {
 			lowerRight.x = line.getStart().x;
 		}
 		if (lowerRight.x < line.getEnd().x) {
 			lowerRight.x = line.getEnd().x;
 		}
-		
+
 		if (lowerRight.y < line.getStart().y) {
 			lowerRight.y = line.getStart().y;
 		}
 		if (lowerRight.y < line.getEnd().y) {
 			lowerRight.y = line.getEnd().y;
 		}
-		
+
 	}
 
 	@Override
@@ -92,4 +113,60 @@ public class GeometricalObjectBBCalculator implements GeometricalObjectVisitor {
 			lowerRight.y = (int) (circle.getCenter().y + circle.getRadius());
 		}
 	}
+
+	@Override
+	public void visit(FTriangle fTriangle) {
+		if (upperLeft == null) {
+			upperLeft = new Point(fTriangle.getpFirst());
+			lowerRight = new Point(fTriangle.getpFirst());
+		}
+		
+		if(fTriangle.getpFirst().x<upperLeft.x) {
+			upperLeft.x=fTriangle.getpFirst().x;
+		}
+		if(fTriangle.getpSecond().x<upperLeft.x) {
+			upperLeft.x=fTriangle.getpSecond().x;
+		}
+		if(fTriangle.getpThird().x<upperLeft.x) {
+			upperLeft.x=fTriangle.getpThird().x;
+		}
+		
+		
+		if(fTriangle.getpFirst().x>lowerRight.x) {
+			lowerRight.x=fTriangle.getpFirst().x;
+		}
+		if(fTriangle.getpSecond().x>lowerRight.x) {
+			lowerRight.x=fTriangle.getpSecond().x;
+		}
+		if(fTriangle.getpThird().x>lowerRight.x) {
+			lowerRight.x=fTriangle.getpThird().x;
+		}
+		
+		//////////////////
+		
+		if(fTriangle.getpFirst().y<upperLeft.y) {
+			upperLeft.y=fTriangle.getpFirst().y;
+		}
+		if(fTriangle.getpSecond().y<upperLeft.y) {
+			upperLeft.y=fTriangle.getpSecond().y;
+		}
+		if(fTriangle.getpThird().y<upperLeft.y) {
+			upperLeft.y=fTriangle.getpThird().y;
+		}
+		
+		if(fTriangle.getpFirst().y>lowerRight.y) {
+			lowerRight.y=fTriangle.getpFirst().y;
+		}
+		if(fTriangle.getpSecond().y>lowerRight.y) {
+			lowerRight.y=fTriangle.getpSecond().y;
+		}
+		if(fTriangle.getpThird().y>lowerRight.y) {
+			lowerRight.y=fTriangle.getpThird().y;
+		}
+		
+		
+		
+		
+	}
+	
 }
