@@ -2,6 +2,8 @@ package hr.fer.zemris.java.custom.scripting.exec;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -10,6 +12,8 @@ import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.INodeVisitor;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
+import hr.fer.zemris.java.custom.scripting.nodes.TimeNode;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.tokens.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.tokens.ElementConstantInteger;
 import hr.fer.zemris.java.custom.scripting.tokens.ElementFunction;
@@ -178,6 +182,8 @@ public class SmartScriptEngine {
 				doFunctionSin(tempStack);
 			} else if (token.asText().equals("decfmt")) {
 				doFunctionDecfmt(tempStack);
+			} else if (token.asText().equals("now")){
+				doFunctionNow(tempStack);
 			} else if (token.asText().equals("dup")) {
 				doFunctionDup(tempStack);
 			} else if (token.asText().equals("swap")) {
@@ -356,6 +362,14 @@ public class SmartScriptEngine {
 			String output = df.format(Double.parseDouble(x.getValue().toString()));
 			tempStack.push(new ValueWrapper(output));
 		}
+		
+		private void doFunctionNow(Stack<ValueWrapper> tempStack) {
+			ValueWrapper wrapper = tempStack.pop();
+			LocalDateTime now = LocalDateTime.now();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(wrapper.getValue().toString());
+	        String formatDateTime = now.format(formatter);
+			tempStack.push(new ValueWrapper(formatDateTime));
+		}
 
 		/**
 		 * Method that describes what happens in case @sin token is found.Short
@@ -392,6 +406,19 @@ public class SmartScriptEngine {
 			}
 
 			return new ValueWrapper(vw1.getValue());
+		}
+
+		@Override
+		public void visitTimeNode(TimeNode timeNode) {
+			LocalDateTime now = LocalDateTime.now();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeNode.getText());
+	        String formatDateTime = now.format(formatter);
+			try {
+				requestContext.write(formatDateTime);
+			} catch (IOException e) {
+				return;
+			}
+			
 		}
 	};
 

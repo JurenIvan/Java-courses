@@ -730,6 +730,10 @@ public class SmartHttpServer {
 	 * @param args used to get path for config file
 	 */
 	public static void main(String[] args) {
+		if(args.length!=1) {
+			System.out.println("One argument expected-> path to config file");
+			return;
+		}
 		SmartHttpServer smartServer;
 		try {
 			smartServer = new SmartHttpServer(args[0]);

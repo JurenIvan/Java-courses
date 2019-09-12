@@ -15,6 +15,7 @@ import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
+import hr.fer.zemris.java.custom.scripting.nodes.TimeNode;
 import hr.fer.zemris.java.custom.scripting.tokens.Element;
 import hr.fer.zemris.java.custom.scripting.tokens.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.tokens.ElementConstantInteger;
@@ -51,7 +52,7 @@ public class SmartScriptParser {
 	public SmartScriptParser(String docBody) {
 		lexer = new SmartLexer(docBody);
 		parse();
-		
+
 	}
 
 	/**
@@ -116,6 +117,30 @@ public class SmartScriptParser {
 						throw new SmartScriptParserException("Input Text not formated properly");
 					}
 					continue;
+				case VARIABLE:
+					try {
+						if (lexer.getToken().getValue().equals("NOW")) {
+							getNextTokenSafe();
+							if(isClosingTag()) {
+								TimeNode timenode = new TimeNode("yyyy-MM-dd HH:mm:ss");
+								((Node) stack.peek()).addChildNode(timenode);
+								continue;
+							} else {
+								TimeNode timenode = new TimeNode(lexer.getToken().getValue().toString());
+								getNextTokenSafe();
+								if (!isClosingTag()) {
+									throw new SmartScriptParserException("Input Text not formated properly");
+								}
+								((Node) stack.peek()).addChildNode(timenode);
+								continue;
+							}
+						} else {
+							throw new SmartScriptParserException(
+									"Tag has to start with {$ followed by: FOR or = or END");
+						}
+					} catch (Exception ex) {
+						throw new SmartScriptParserException("Tag has to start with {$ followed by: FOR or = or END");
+					}
 				default:
 					throw new SmartScriptParserException("Tag has to start with {$ followed by: FOR or = or END");
 				}
@@ -174,10 +199,10 @@ public class SmartScriptParser {
 			expressions[2] = null;
 		}
 		lexer.nextToken();
-		if(!isClosingTag()) {
+		if (!isClosingTag()) {
 			throw new SmartScriptParserException("Too much arguments in for tag");
 		}
-		
+
 		return new ForLoopNode(variable, expressions[0], expressions[1], expressions[2]);
 	}
 
@@ -244,7 +269,8 @@ public class SmartScriptParser {
 	}
 
 	// I disagree with "If this line ever executes, you have failed this class!". If
-	// lexer founds error it is natural (for me) that he throws it appropriately. This
+	// lexer founds error it is natural (for me) that he throws it appropriately.
+	// This
 	// method insures that no Lexer exceptions end up past parser.
 	/**
 	 * This is way to delegate all lexer errors to parser in the way he excepts it

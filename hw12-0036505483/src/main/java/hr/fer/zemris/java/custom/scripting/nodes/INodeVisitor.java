@@ -40,5 +40,7 @@ public interface INodeVisitor {
 	 * @param DocumentNode {@link TextNode} that is visited.
 	 */
 	public void visitTextNode(TextNode textNode);
+	
+	public void visitTimeNode(TimeNode timeNode);
 
 }

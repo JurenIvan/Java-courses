@@ -27,7 +27,7 @@ public class SmartScriptEngineDemo {
 	 * @param args not used.
 	 */
 	public static void main(String[] args) {
-		String documentBody = readFromDisk(".\\webroot\\scripts\\osnovni.smscr");
+		String documentBody = readFromDisk(".\\webroot\\scripts\\ispit.smscr");
 		if (documentBody == null)
 			return;
 		Map<String, String> parameters = new HashMap<String, String>();

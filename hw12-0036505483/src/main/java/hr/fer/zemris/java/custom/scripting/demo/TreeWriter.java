@@ -10,6 +10,7 @@ import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.INodeVisitor;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
+import hr.fer.zemris.java.custom.scripting.nodes.TimeNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 
@@ -164,6 +165,12 @@ public class TreeWriter {
 		 */
 		public String getText() {
 			return finalText;
+		}
+
+		@Override
+		public void visitTimeNode(TimeNode timeNode) {
+			// TODO Auto-generated method stub
+			
 		}
 
 	}
