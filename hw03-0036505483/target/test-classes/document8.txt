@@ -1,1 +1,0 @@
-Exam\ple { bla } blu \{$=1$}. Nothing interesting {=here}.

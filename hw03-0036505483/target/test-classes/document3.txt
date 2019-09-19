@@ -1,3 +1,0 @@
-{$= "ivan" @juren $}
-i hope this "works]
-{$= "taminamina""e e" wakawaka ee @taminamina"this""is"0 @Africa 2.123-2.123 + $}

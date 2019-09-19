@@ -1,5 +1,0 @@
-{$= "Man's not hot, never hot" @MansNot @hot $}
-2 plus 2.0 is -4.0 minus one thats three quick maths
-Everyday mans on the block smoke trees.
-{$= quack-quack-quack "he's got the frisbee" @awesome 1 + "dva" @test $}
-{$= 2 plus "2.0" is -4.0 $}

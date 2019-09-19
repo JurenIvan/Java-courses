@@ -1,5 +1,0 @@
-{$ FOR year 1 last_year$}{$END$}
-{$ FOR year "1" last_year $}{$END$}
-{$ FOR year 1 "\\  "  asd $}{$END$}
-{$ FOR year 1 "\\ marko "  asd$}{$END$}
-{$ FOR year 1 "\\  "  asd$}{$END$}
