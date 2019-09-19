@@ -1,0 +1,3 @@
+{$ NOW $}
+{$ NOW "yyyy-MM-dd" $} 
+{$ NOW "HH:mm:ss" $} 

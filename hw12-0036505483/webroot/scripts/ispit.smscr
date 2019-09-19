@@ -3,3 +3,5 @@
 <p>Ispis trenutnog datuma: {$ NOW "yyyy-MM-dd" $}</p>
 <p>Ispis trenutnog vremena: {$ NOW "HH:mm:ss" $}</p>
 <p>Ispis datuma preko funkcije: {$ = "yyyy-MM-dd" @now $}
+<p>Ispis trenutne Godine: {$ NOW "yyyy" $}</p>
+<p>godine: {$ = "yyyy" @now $}

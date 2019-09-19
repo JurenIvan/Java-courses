@@ -47,7 +47,6 @@ import hr.fer.zemris.java.hw17.jvdraw.drawingModel.DrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.drawingModel.DrawingModelImpl;
 import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Circle;
-import hr.fer.zemris.java.hw17.jvdraw.shapes.FTriangle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.FilledCircle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Line;
@@ -249,29 +248,24 @@ public class JVDraw extends JFrame {
 		JToggleButton line = new JToggleButton("Line");
 		JToggleButton circle = new JToggleButton("Circle");
 		JToggleButton fCircle = new JToggleButton("Filled Circle");
-		JToggleButton fTriangle = new JToggleButton("Filled Triangle");
 		line.setSelected(true);
 
 		group.add(line);
 		group.add(circle);
 		group.add(fCircle);
-		group.add(fTriangle);
 
 		tb.add(line);
 		tb.add(circle);
 		tb.add(fCircle);
-		tb.add(fTriangle);
 
 		Tool lineTool = new LineTools(fgColorProvider, drawingModel, canvas);
 		Tool circleTool = new CircleTools(fgColorProvider, drawingModel, canvas);
 		Tool fCircleTool = new FCircleTools(fgColorProvider, bgColorProvider, drawingModel, canvas);
-		Tool fTriangleTool = new FTriangleTool(fgColorProvider, bgColorProvider, drawingModel, canvas);
 
 		line.addActionListener((e) -> currStateTool = lineTool);
 		circle.addActionListener((e) -> currStateTool = circleTool);
 		fCircle.addActionListener((e) -> currStateTool = fCircleTool);
-		fTriangle.addActionListener((e) -> currStateTool = fTriangleTool);
-		
+
 		line.setSelected(true);
 		currStateTool = lineTool;
 		cp.add(tb, BorderLayout.PAGE_START);
@@ -351,8 +345,6 @@ public class JVDraw extends JFrame {
 						listOfParsedObjects.add(createCircleFromStringArray(splitted));
 					} else if (splitted[0].equals("FCIRCLE")) {
 						listOfParsedObjects.add(createFilledCircleFromStringArray(splitted));
-					} else if(splitted[0].equals("FTRIANGLE")) {
-						listOfParsedObjects.add(createFTriangleFromStringArray(splitted));
 					}
 				}
 
@@ -373,21 +365,8 @@ public class JVDraw extends JFrame {
 		 * @param splitted array of tokens
 		 * @return Circle
 		 */
-		private FTriangle createFTriangleFromStringArray(String[] splitted) {
-			return new FTriangle(
-					new Color(Integer.parseInt(splitted[7]), Integer.parseInt(splitted[8]),Integer.parseInt(splitted[9])),
-					new Color(Integer.parseInt(splitted[10]), Integer.parseInt(splitted[11]),Integer.parseInt(splitted[12])),
-					
-					new Point(Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2])),
-					new Point(Integer.parseInt(splitted[3]),Integer.parseInt(splitted[4])),
-					new Point(Integer.parseInt(splitted[5]),Integer.parseInt(splitted[6]))
-					);
-		}
-		
-		
 		private FilledCircle createFilledCircleFromStringArray(String[] splitted) {
-			return new FilledCircle
-					(new Point(Integer.parseInt(splitted[1]), (Integer.parseInt(splitted[2]))),
+			return new FilledCircle(new Point(Integer.parseInt(splitted[1]), (Integer.parseInt(splitted[2]))),
 					new Point(Integer.parseInt(splitted[1]),
 							Integer.parseInt(splitted[2]) + Integer.parseInt(splitted[3])),
 					new Color(Integer.parseInt(splitted[4]), Integer.parseInt(splitted[5]),

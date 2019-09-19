@@ -3,7 +3,6 @@ package hr.fer.zemris.java.hw17.jvdraw.visitors;
 import java.awt.Graphics;
 
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Circle;
-import hr.fer.zemris.java.hw17.jvdraw.shapes.FTriangle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.FilledCircle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Line;
@@ -56,26 +55,6 @@ public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 		g2d.setColor(circle.getOutlineColor());
 		g2d.drawOval((int) (circle.getCenter().x - radius), (int) (circle.getCenter().y - radius), (int) radius * 2,
 				(int) radius * 2);
-	}
-
-	@Override
-	public void visit(FTriangle fTriangle) {
-		int x[]=new int[3];
-		int y[]=new int[3];
-		
-		x[0]=fTriangle.getpFirst().x;
-		x[1]=fTriangle.getpSecond().x;
-		x[2]=fTriangle.getpThird().x;
-		
-		y[0]=fTriangle.getpFirst().y;
-		y[1]=fTriangle.getpSecond().y;
-		y[2]=fTriangle.getpThird().y;
-		
-		g2d.setColor(fTriangle.getFillColor());
-		g2d.fillPolygon(x, y, 3);
-		g2d.setColor(fTriangle.getOutlineColor());
-		g2d.drawPolygon(x,y,3);
-		
 	}
 
 }

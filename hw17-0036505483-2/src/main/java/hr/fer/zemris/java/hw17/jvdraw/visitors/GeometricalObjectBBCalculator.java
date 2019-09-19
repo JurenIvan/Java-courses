@@ -5,7 +5,6 @@ import java.awt.Rectangle;
 
 import hr.fer.zemris.java.hw17.jvdraw.JDrawingCanvas;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Circle;
-import hr.fer.zemris.java.hw17.jvdraw.shapes.FTriangle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.FilledCircle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Line;
@@ -113,60 +112,4 @@ public class GeometricalObjectBBCalculator implements GeometricalObjectVisitor {
 			lowerRight.y = (int) (circle.getCenter().y + circle.getRadius());
 		}
 	}
-
-	@Override
-	public void visit(FTriangle fTriangle) {
-		if (upperLeft == null) {
-			upperLeft = new Point(fTriangle.getpFirst());
-			lowerRight = new Point(fTriangle.getpFirst());
-		}
-		
-		if(fTriangle.getpFirst().x<upperLeft.x) {
-			upperLeft.x=fTriangle.getpFirst().x;
-		}
-		if(fTriangle.getpSecond().x<upperLeft.x) {
-			upperLeft.x=fTriangle.getpSecond().x;
-		}
-		if(fTriangle.getpThird().x<upperLeft.x) {
-			upperLeft.x=fTriangle.getpThird().x;
-		}
-		
-		
-		if(fTriangle.getpFirst().x>lowerRight.x) {
-			lowerRight.x=fTriangle.getpFirst().x;
-		}
-		if(fTriangle.getpSecond().x>lowerRight.x) {
-			lowerRight.x=fTriangle.getpSecond().x;
-		}
-		if(fTriangle.getpThird().x>lowerRight.x) {
-			lowerRight.x=fTriangle.getpThird().x;
-		}
-		
-		//////////////////
-		
-		if(fTriangle.getpFirst().y<upperLeft.y) {
-			upperLeft.y=fTriangle.getpFirst().y;
-		}
-		if(fTriangle.getpSecond().y<upperLeft.y) {
-			upperLeft.y=fTriangle.getpSecond().y;
-		}
-		if(fTriangle.getpThird().y<upperLeft.y) {
-			upperLeft.y=fTriangle.getpThird().y;
-		}
-		
-		if(fTriangle.getpFirst().y>lowerRight.y) {
-			lowerRight.y=fTriangle.getpFirst().y;
-		}
-		if(fTriangle.getpSecond().y>lowerRight.y) {
-			lowerRight.y=fTriangle.getpSecond().y;
-		}
-		if(fTriangle.getpThird().y>lowerRight.y) {
-			lowerRight.y=fTriangle.getpThird().y;
-		}
-		
-		
-		
-		
-	}
-	
 }

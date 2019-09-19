@@ -5,7 +5,6 @@ import java.util.List;
 
 import hr.fer.zemris.java.hw17.jvdraw.drawingModel.DrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Circle;
-import hr.fer.zemris.java.hw17.jvdraw.shapes.FTriangle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.FilledCircle;
 import hr.fer.zemris.java.hw17.jvdraw.shapes.Line;
 
@@ -59,24 +58,6 @@ public class GeometricalObjectOutputter implements GeometricalObjectVisitor {
 				filledCircle.getOutlineColor().getGreen(), filledCircle.getOutlineColor().getBlue(),
 				filledCircle.getFillColor().getRed(), filledCircle.getFillColor().getGreen(),
 				filledCircle.getFillColor().getBlue()));
-	}
-
-	@Override
-	public void visit(FTriangle fTriangle) {
-		outputList.add(String.format("FTRIANGLE %d %d %d %d %d %d %d %d %d %d %d %d", 
-				fTriangle.getpFirst().x,
-				fTriangle.getpFirst().y, 
-				fTriangle.getpSecond().x, 
-				fTriangle.getpSecond().y,
-				fTriangle.getpThird().x,
-				fTriangle.getpThird().y,
-				fTriangle.getOutlineColor().getRed(),
-				fTriangle.getOutlineColor().getGreen(),
-				fTriangle.getOutlineColor().getBlue(),
-				fTriangle.getFillColor().getRed(),
-				fTriangle.getFillColor().getGreen(),
-				fTriangle.getFillColor().getBlue()));;
-
 	}
 
 }
